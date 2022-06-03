@@ -48,7 +48,6 @@ pyOpenSSL==22.0.0
 pyowm==3.3.0
 pyparsing==3.0.9
 pyperclip==1.8.2
-pypiwin32==223
 pyppeteer==1.0.2
 PyPrind==2.11.3
 pyquery==1.4.3
