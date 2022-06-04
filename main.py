@@ -5,6 +5,7 @@ from types import NoneType
 from aiogram import Bot, Dispatcher, executor, types
 import time
 from datetime import datetime
+from translate import Translator
 
 from aiohttp import ContentTypeError
 
@@ -18,6 +19,17 @@ async def rp_commands(message: types.Message):
     if message.text == 'youid':
         youid = message.reply_to_message.from_user.id
         await bot.send_message(message.chat.id, youid)
+    if message.text.lower() == 'дата':
+        loc = time.localtime()
+        day = time.strftime('%A', loc)
+        mes = time.strftime('%B', loc)
+        god = time.strftime('%H', loc)
+        xv = time.strftime('%M', loc)
+        chislo = time.strftime('%d', loc)
+        tran = Translator(from_lang='english', to_lang='uk')
+        tranday = tran.translate(day)
+        tranmes = tran.translate(mes)
+        await bot.send_message(message.chat.id, (f'⌚️ Час: {god}:{xv}\n⏰ День: {tranday}\n📅 Дата: {chislo} | {tranmes}'))
     if message.text.lower() == 'уроки':
         n = time.localtime()
         now = datetime.now()
@@ -77,12 +89,10 @@ async def rp_commands(message: types.Message):
             else:
                 await bot.send_message(message.chat.id, 'Не знаю нащо тобі розклад... Но вже по урокам')
         if den_nedeli == 5:
-            await bot.send_message(message.chat.id, 'Субота')
             await bot.send_message(message.chat.id, 'Сьоні вихідні!!!')
         if den_nedeli == 6:
-            await bot.send_message(message.chat.id, 'Неділя')
             await bot.send_message(message.chat.id, 'Сьоні вихідні!!!')
-            
+    
     if message.text == 'my':
         await bot.send_message(message.chat.id, message.from_user.id)
     if message.text == 'mychat':
