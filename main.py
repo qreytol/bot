@@ -20,16 +20,19 @@ async def rp_commands(message: types.Message):
         youid = message.reply_to_message.from_user.id
         await bot.send_message(message.chat.id, youid)
     if message.text.lower() == 'дата':
+        dt = datetime.now()
+        locdt = dt.strftime('%H:%M')
         loc = time.localtime()
         day = time.strftime('%A', loc)
         mes = time.strftime('%B', loc)
-        god = time.strftime('%H', loc)
-        xv = time.strftime('%M', loc)
         chislo = time.strftime('%d', loc)
+        meschislo = time.strftime('m', loc)
+        fulldata = time.strftime('%d:%m:%Y', loc)
         tran = Translator(from_lang='english', to_lang='uk')
         tranday = tran.translate(day)
         tranmes = tran.translate(mes)
-        await bot.send_message(message.chat.id, (f'⌚️ Час: {god}:{xv}\n⏰ День: {tranday}\n📅 Дата: {chislo} | {tranmes}'))
+        await bot.send_message(message.chat.id, (f'⌚️ Час: {locdt}\n⏰ День: {tranday}\n📅 Дата: {chislo} | {tranmes}\n⏳ Фулл дата: {fulldata}'))
+        pass
     if message.text.lower() == 'уроки':
         n = time.localtime()
         now = datetime.now()
