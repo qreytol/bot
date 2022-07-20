@@ -29,6 +29,11 @@ importlib-metadata==4.11.3
 itsdangerous==2.1.2
 Jinja2==3.1.1
 Js2Py==0.71
+Kivy==2.1.0
+kivy-deps.angle==0.3.2
+kivy-deps.glew==0.3.1
+kivy-deps.sdl2==0.4.5
+Kivy-Garden==0.1.5
 lxml==4.8.0
 MarkupSafe==2.1.1
 multidict==6.0.2
@@ -40,6 +45,7 @@ parse==1.19.0
 pipwin==0.5.2
 pyaes==1.6.1
 pyasn1==0.4.8
+PyAudio @ file:///C:/Users/Legion/pipwin/PyAudio-0.2.11-cp310-cp310-win_amd64.whl
 pycparser==2.21
 pyee==8.2.2
 Pygments==2.12.0
@@ -48,6 +54,7 @@ pyOpenSSL==22.0.0
 pyowm==3.3.0
 pyparsing==3.0.9
 pyperclip==1.8.2
+pypiwin32==223
 pyppeteer==1.0.2
 PyPrind==2.11.3
 pyquery==1.4.3
@@ -56,6 +63,8 @@ PySocks==1.7.1
 pyTelegramBotAPI==4.2.2
 python-dateutil==2.8.2
 pytz==2022.1
+pytz-deprecation-shim==0.1.0.post0
+pywin32==303
 requests==2.26.0
 requests-html==0.10.0
 rsa==4.8
@@ -78,4 +87,3 @@ Werkzeug==2.1.0
 wsproto==1.1.0
 yarl==1.7.2
 zipp==3.8.0
-translate==3.6.1
