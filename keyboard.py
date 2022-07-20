@@ -4,7 +4,7 @@ import datetime
 
 today = datetime.date.today()
 six_day = today + datetime.timedelta(days=5)
-two_day = today + datetime.timedelta(days=1)
+two_day = today + datetime.timedelta(days=6)
 three_day = today + datetime.timedelta(days=2)
 thour_day = today + datetime.timedelta(days=3)
 five_day = today + datetime.timedelta(days=4)
