@@ -45,7 +45,6 @@ parse==1.19.0
 pipwin==0.5.2
 pyaes==1.6.1
 pyasn1==0.4.8
-PyAudio @ file:///C:/Users/Legion/pipwin/PyAudio-0.2.11-cp310-cp310-win_amd64.whl
 pycparser==2.21
 pyee==8.2.2
 Pygments==2.12.0
