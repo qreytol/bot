@@ -95,7 +95,7 @@ async def rp_commands(message: types.Message):
                 month_pars = el.select('.date')[0].text
                 day_name = el.select('.month')[0].text
                 
-            await message.reply(f'📅Дата {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+            await message.reply(f'📅Дата: сьогодні | {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
@@ -167,7 +167,7 @@ async def rp_commands(message: types.Message):
                     month_pars = el.select('.date')[0].text
                     day_name = el.select('.month')[0].text
                     
-                await query.message.edit_text(f'📅Дата {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: сьогодні |{day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
             
         if message.text == 'Допомога' or message.text == 'допомога':
             user_id = message.from_user.id
