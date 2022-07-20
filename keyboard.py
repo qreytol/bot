@@ -3,15 +3,13 @@ from DATETIME import date_time
 import datetime
 
 today = datetime.date.today()
-six_day = today + datetime.timedelta(days=5)
-two_day = today + datetime.timedelta(days=1)
-three_day = today + datetime.timedelta(days=2)
-thour_day = today + datetime.timedelta(days=3)
-five_day = today + datetime.timedelta(days=4)
-tomorow = today + datetime.timedelta(days=0)
+six_day = today + datetime.timedelta(days=4)
+two_day = today + datetime.timedelta(days=0)
+three_day = today + datetime.timedelta(days=1)
+thour_day = today + datetime.timedelta(days=2)
+five_day = today + datetime.timedelta(days=3)
 dtimee = date_time()
 
-week = tomorow.strftime('%A')
 week_two = two_day.strftime('%A')
 week_three = three_day.strftime('%A')
 week_thour = thour_day.strftime('%A')
