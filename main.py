@@ -20,7 +20,6 @@ import config
 import requests
 from bs4 import BeautifulSoup as BS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-import schedule
 import keyboard as inl
 
 from aiohttp import ContentTypeError
