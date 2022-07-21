@@ -1,15 +1,17 @@
 from ast import Await
 from cgitb import text
-from email import message
+from email import message, utils
 from email.policy import default
 from itertools import count
 import logging
 from tabnanny import check
 from types import NoneType
 from typing import final
+from xml.dom import ValidationErr
 from aiogram import Bot, Dispatcher, executor, types
 import time
-from datetime import datetime
+import datetime
+import aiogram
 from click import command
 from numpy import integer
 from DBusers import SQLitedb
@@ -93,11 +95,24 @@ async def rp_commands(message: types.Message):
                 day_pars = el.select('.day-link')[0].text
                 month_pars = el.select('.date')[0].text
                 day_name = el.select('.month')[0].text
+                zaraz = el.select('.imgBlock .today-temp')[0].text
+                witer_rano = el.select('.gray .p4')[2].text
+                witer_den = el.select('.gray .p5')[2].text
+                witer_vechir = el.select('.gray .p7')[2].text
+                dosch_rano = el.select('tr .p3')[7].text
+                dosch_den = el.select('tr .p5')[7].text
+                dosch_vechir = el.select('tr .p7')[7].text
                 
-            await message.reply(f'📅Дата: сьогодні | {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+            await message.reply(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Рано:\nВітер | {witer_rano} м/сек\nЙмовірність опадів | {dosch_rano}%\n🌤️День:\nВітер | {witer_den} м/сек\nЙмовірність опадів | {dosch_den}%\n⭐Вечір:\nВітер | {witer_vechir} м/сек\nЙмовірність опадів | {dosch_vechir}%', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(days=2)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
                     t_min = el.select('.temperature .min')[1].text
                     t_max = el.select('.temperature .max')[1].text
@@ -105,11 +120,23 @@ async def rp_commands(message: types.Message):
                     day_pars = el.select('.day-link')[1].text
                     month_pars = el.select('.date')[1].text
                     day_name = el.select('.month')[1].text
+                    witer_rano = el.select('.gray .p4')[2].text
+                    witer_den = el.select('.gray .p6')[2].text
+                    witer_vechir = el.select('.gray .p8')[2].text
+                    dosch_rano = el.select('tr .p4')[7].text
+                    dosch_den = el.select('tr .p6')[7].text
+                    dosch_vechir = el.select('tr .p8')[7].text
                     
-                await query.message.edit_text(f'📅Дата {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n☀️Рано:\nВітер | {witer_rano} м/сек\nЙмовірність опадів | {dosch_rano}%\n🌤️День:\nВітер | {witer_den} м/сек\nЙмовірність опадів | {dosch_den}%\n⭐Вечір:\nВітер | {witer_vechir} м/сек\nЙмовірність опадів | {dosch_vechir}%', reply_markup=inl.mainMenu)
                 
             @dp.callback_query_handler(text='left_weather')
             async def weather_right(query: types.CallbackQuery):
+                today = datetime.date.today()
+                pisla_zavtra = today + datetime.timedelta(days=3)
+                dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
                     t_min = el.select('.temperature .min')[2].text
                     t_max = el.select('.temperature .max')[2].text
@@ -118,10 +145,16 @@ async def rp_commands(message: types.Message):
                     month_pars = el.select('.date')[2].text
                     day_name = el.select('.month')[2].text
                     
-                await query.message.edit_text(f'📅Дата {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='thourbtn')
             async def weather_right(query: types.CallbackQuery):
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(days=4)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
                     t_min = el.select('.temperature .min')[3].text
                     t_max = el.select('.temperature .max')[3].text
@@ -130,10 +163,16 @@ async def rp_commands(message: types.Message):
                     month_pars = el.select('.date')[3].text
                     day_name = el.select('.month')[3].text
                     
-                await query.message.edit_text(f'📅Дата {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='fivebtn')
             async def weather_right(query: types.CallbackQuery):
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(days=5)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
                     t_min = el.select('.temperature .min')[4].text
                     t_max = el.select('.temperature .max')[4].text
@@ -142,10 +181,16 @@ async def rp_commands(message: types.Message):
                     month_pars = el.select('.date')[4].text
                     day_name = el.select('.month')[4].text
                     
-                await query.message.edit_text(f'📅Дата {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='sixbtn')
             async def weather_right(query: types.CallbackQuery):
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(days=6)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
                     t_min = el.select('.temperature .min')[5].text
                     t_max = el.select('.temperature .max')[5].text
@@ -154,10 +199,16 @@ async def rp_commands(message: types.Message):
                     month_pars = el.select('.date')[5].text
                     day_name = el.select('.month')[5].text
                     
-                await query.message.edit_text(f'📅Дата {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='twobtn')
             async def weather_right(query: types.CallbackQuery):
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(days=1)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
                     t_min = el.select('.temperature .min')[0].text
                     t_max = el.select('.temperature .max')[0].text
@@ -165,8 +216,15 @@ async def rp_commands(message: types.Message):
                     day_pars = el.select('.day-link')[0].text
                     month_pars = el.select('.date')[0].text
                     day_name = el.select('.month')[0].text
+                    zaraz = el.select('.imgBlock .today-temp')[0].text
+                    witer_rano = el.select('.gray .p4')[2].text
+                    witer_den = el.select('.gray .p5')[2].text
+                    witer_vechir = el.select('.gray .p7')[2].text
+                    dosch_rano = el.select('tr .p3')[7].text
+                    dosch_den = el.select('tr .p5')[7].text
+                    dosch_vechir = el.select('tr .p7')[7].text
                     
-                await query.message.edit_text(f'📅Дата: сьогодні | {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Рано:\nВітер | {witer_rano} м/сек\nЙмовірність опадів | {dosch_rano}%\n🌤️День:\nВітер | {witer_den} м/сек\nЙмовірність опадів | {dosch_den}%\n⭐Вечір:\nВітер | {witer_vechir} м/сек\nЙмовірність опадів | {dosch_vechir}%', reply_markup=inl.mainMenu)
             
         if message.text == 'Допомога' or message.text == 'допомога':
             user_id = message.from_user.id
@@ -359,6 +417,7 @@ async def rp_commands(message: types.Message):
             db.nick_user(firstname, user_id)
     except UnboundLocalError:
         await message.reply('Такого міста не існує')
+    
         
 if __name__ == '__main__':
     #запуск бота
