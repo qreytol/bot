@@ -22,7 +22,6 @@ import config
 import requests
 from bs4 import BeautifulSoup as BS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-import schedule
 import keyboard as inl
 
 from aiohttp import ContentTypeError
@@ -205,7 +204,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='twobtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=0)
+                zavtra = today + datetime.timedelta(days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
