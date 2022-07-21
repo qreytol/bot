@@ -270,7 +270,7 @@ async def rp_commands(message: types.Message):
                     mini_weather_vechir = el.select('.img .weatherIco')[7]['title']
                     
                     
-                await query.message.reply(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Ранок:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Ранок 9:00:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День 15:00:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір 21:00:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
             
         if message.text == 'Допомога' or message.text == 'допомога':
             user_id = message.from_user.id
