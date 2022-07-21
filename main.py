@@ -97,13 +97,16 @@ async def rp_commands(message: types.Message):
                 day_name = el.select('.month')[0].text
                 zaraz = el.select('.imgBlock .today-temp')[0].text
                 witer_rano = el.select('.gray .p4')[2].text
-                witer_den = el.select('.gray .p5')[2].text
-                witer_vechir = el.select('.gray .p7')[2].text
-                dosch_rano = el.select('tr .p3')[7].text
-                dosch_den = el.select('tr .p5')[7].text
-                dosch_vechir = el.select('tr .p7')[7].text
+                witer_den = el.select('.gray .p6')[2].text
+                witer_vechir = el.select('.gray .p8')[2].text
+                dosch_rano = el.select('tr .p4')[7].text
+                dosch_den = el.select('tr .p6')[7].text
+                dosch_vechir = el.select('tr .p8')[7].text
+                mini_weather_rano = el.select('.img .weatherIco')[3]['title']
+                mini_weather_den = el.select('.img .weatherIco')[5]['title']
+                mini_weather_vechir = el.select('.img .weatherIco')[7]['title']
                 
-            await message.reply(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Рано:\nВітер | {witer_rano} м/сек\nЙмовірність опадів | {dosch_rano}%\n🌤️День:\nВітер | {witer_den} м/сек\nЙмовірність опадів | {dosch_den}%\n⭐Вечір:\nВітер | {witer_vechir} м/сек\nЙмовірність опадів | {dosch_vechir}%', reply_markup=inl.mainMenu)
+            await message.reply(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Ранок 9:00:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День 15:00:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір 21:00:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
@@ -126,8 +129,11 @@ async def rp_commands(message: types.Message):
                     dosch_rano = el.select('tr .p4')[7].text
                     dosch_den = el.select('tr .p6')[7].text
                     dosch_vechir = el.select('tr .p8')[7].text
+                    mini_weather_rano = el.select('.img .weatherIco')[3]['title']
+                    mini_weather_den = el.select('.img .weatherIco')[5]['title']
+                    mini_weather_vechir = el.select('.img .weatherIco')[7]['title']
                     
-                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n☀️Рано:\nВітер | {witer_rano} м/сек\nЙмовірність опадів | {dosch_rano}%\n🌤️День:\nВітер | {witer_den} м/сек\nЙмовірність опадів | {dosch_den}%\n⭐Вечір:\nВітер | {witer_vechir} м/сек\nЙмовірність опадів | {dosch_vechir}%', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n☀️Ранок 9:00:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День 15:00:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір 21:00:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
                 
             @dp.callback_query_handler(text='left_weather')
             async def weather_right(query: types.CallbackQuery):
@@ -144,8 +150,17 @@ async def rp_commands(message: types.Message):
                     day_pars = el.select('.day-link')[2].text
                     month_pars = el.select('.date')[2].text
                     day_name = el.select('.month')[2].text
+                    witer_rano = el.select('.gray .p2')[2].text
+                    witer_den = el.select('.gray .p3')[2].text
+                    witer_vechir = el.select('.gray .p4')[2].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    mini_weather_rano = el.select('.img .weatherIco')[1]['title']
+                    mini_weather_den = el.select('.img .weatherIco')[2]['title']
+                    mini_weather_vechir = el.select('.img .weatherIco')[3]['title']
                     
-                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n☀️Ранок 9:00:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День 15:00:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір 21:00:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='thourbtn')
             async def weather_right(query: types.CallbackQuery):
@@ -162,8 +177,17 @@ async def rp_commands(message: types.Message):
                     day_pars = el.select('.day-link')[3].text
                     month_pars = el.select('.date')[3].text
                     day_name = el.select('.month')[3].text
+                    witer_rano = el.select('.gray .p2')[2].text
+                    witer_den = el.select('.gray .p3')[2].text
+                    witer_vechir = el.select('.gray .p4')[2].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    mini_weather_rano = el.select('.img .weatherIco')[1]['title']
+                    mini_weather_den = el.select('.img .weatherIco')[2]['title']
+                    mini_weather_vechir = el.select('.img .weatherIco')[3]['title']
                     
-                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n☀️Ранок 9:00:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День 15:00:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір 21:00:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='fivebtn')
             async def weather_right(query: types.CallbackQuery):
@@ -180,8 +204,17 @@ async def rp_commands(message: types.Message):
                     day_pars = el.select('.day-link')[4].text
                     month_pars = el.select('.date')[4].text
                     day_name = el.select('.month')[4].text
+                    witer_rano = el.select('.gray .p2')[2].text
+                    witer_den = el.select('.gray .p3')[2].text
+                    witer_vechir = el.select('.gray .p4')[2].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    mini_weather_rano = el.select('.img .weatherIco')[1]['title']
+                    mini_weather_den = el.select('.img .weatherIco')[2]['title']
+                    mini_weather_vechir = el.select('.img .weatherIco')[3]['title']
                     
-                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n☀️Ранок 9:00:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День 15:00:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір 21:00:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='sixbtn')
             async def weather_right(query: types.CallbackQuery):
@@ -198,8 +231,17 @@ async def rp_commands(message: types.Message):
                     day_pars = el.select('.day-link')[5].text
                     month_pars = el.select('.date')[5].text
                     day_name = el.select('.month')[5].text
+                    witer_rano = el.select('.gray .p2')[2].text
+                    witer_den = el.select('.gray .p3')[2].text
+                    witer_vechir = el.select('.gray .p4')[2].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    mini_weather_rano = el.select('.img .weatherIco')[1]['title']
+                    mini_weather_den = el.select('.img .weatherIco')[2]['title']
+                    mini_weather_vechir = el.select('.img .weatherIco')[3]['title']
                     
-                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n☀️Ранок 9:00\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День 15:00:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір 21:00:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
             
             @dp.callback_query_handler(text='twobtn')
             async def weather_right(query: types.CallbackQuery):
@@ -218,13 +260,17 @@ async def rp_commands(message: types.Message):
                     day_name = el.select('.month')[0].text
                     zaraz = el.select('.imgBlock .today-temp')[0].text
                     witer_rano = el.select('.gray .p4')[2].text
-                    witer_den = el.select('.gray .p5')[2].text
-                    witer_vechir = el.select('.gray .p7')[2].text
-                    dosch_rano = el.select('tr .p3')[7].text
-                    dosch_den = el.select('tr .p5')[7].text
-                    dosch_vechir = el.select('tr .p7')[7].text
+                    witer_den = el.select('.gray .p6')[2].text
+                    witer_vechir = el.select('.gray .p8')[2].text
+                    dosch_rano = el.select('tr .p4')[7].text
+                    dosch_den = el.select('tr .p6')[7].text
+                    dosch_vechir = el.select('tr .p8')[7].text
+                    mini_weather_rano = el.select('.img .weatherIco')[3]['title']
+                    mini_weather_den = el.select('.img .weatherIco')[5]['title']
+                    mini_weather_vechir = el.select('.img .weatherIco')[7]['title']
                     
-                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Рано:\nВітер | {witer_rano} м/сек\nЙмовірність опадів | {dosch_rano}%\n🌤️День:\nВітер | {witer_den} м/сек\nЙмовірність опадів | {dosch_den}%\n⭐Вечір:\nВітер | {witer_vechir} м/сек\nЙмовірність опадів | {dosch_vechir}%', reply_markup=inl.mainMenu)
+                    
+                await query.message.reply(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Ранок:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
             
         if message.text == 'Допомога' or message.text == 'допомога':
             user_id = message.from_user.id
