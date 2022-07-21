@@ -463,6 +463,17 @@ async def rp_commands(message: types.Message):
             db.nick_user(firstname, user_id)
     except UnboundLocalError:
         await message.reply('Такого міста не існує')
+    else:
+        add_time = dtime.time(time.localtime())
+        user_id = message.from_user.id
+        username = message.from_user.username
+        firstname = message.from_user.first_name
+        if not db.check_id_bool(user_id):
+            db.add_to_db(user_id, username, firstname)
+            db.add_datetime(add_time, user_id)
+        
+        if db.check_nick(user_id) == None:
+            db.nick_user(firstname, user_id)
     
         
 if __name__ == '__main__':
