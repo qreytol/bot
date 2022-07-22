@@ -3,11 +3,11 @@ from DATETIME import date_time
 import datetime
 
 today = datetime.date.today()
-six_day = today + datetime.timedelta(days=6)
-two_day = today + datetime.timedelta(days=2)
-three_day = today + datetime.timedelta(days=3)
-thour_day = today + datetime.timedelta(days=4)
-five_day = today + datetime.timedelta(days=5)
+six_day = today + datetime.timedelta(days=5)
+two_day = today + datetime.timedelta(days=1)
+three_day = today + datetime.timedelta(days=2)
+thour_day = today + datetime.timedelta(days=3)
+five_day = today + datetime.timedelta(days=4)
 dtimee = date_time()
 
 week_two = two_day.strftime('%A')
