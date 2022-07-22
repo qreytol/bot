@@ -64,7 +64,7 @@ async def start(message: types.Message):
     username = message.from_user.username
     firstname = message.from_user.first_name
     if not db.check_nick(user_id):
-        db.add_to_db(user_id, username, firstname)
+        db.add_to_db(user_id, username, firstname, '')
         db.add_datetime(add_time, user_id)
     await bot.send_message(message.chat.id, f'''
 👨‍🔧Привіт [{firstname}](tg://user?id={user_id})
@@ -78,6 +78,10 @@ async def start(message: types.Message):
 @dp.message_handler(content_types='text')
 async def rp_commands(message: types.Message):
     try:
+        if message.text == 'Хто я':
+            my_user_id = message.from_user.id
+            new_opis_check = db.check_opis(my_user_id)
+            await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐️ Статус адмінки: {admbd.check_adm(my_user_id)[0]}\n💬 Мій опис: ' + new_opis_check[0] + '\n\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0])
         if 'Погода ' in message.text:
             
             city = message.text[7:]
@@ -270,7 +274,7 @@ async def rp_commands(message: types.Message):
                     mini_weather_vechir = el.select('.img .weatherIco')[7]['title']
                     
                     
-                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Ранок 9:00:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День 15:00:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір 21:00:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Ранок:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
             
         if message.text == 'Допомога' or message.text == 'допомога':
             user_id = message.from_user.id
@@ -297,10 +301,6 @@ async def rp_commands(message: types.Message):
 9) `сильно вдарити`
 10) `цьом`
 ''', parse_mode='Markdown')
-        if message.text == 'Хто я':
-            my_user_id = message.from_user.id
-            new_opis_check = db.check_opis(my_user_id)
-            await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐️ Статус адмінки: {admbd.check_adm(my_user_id)[0]}\n💬 Мій опис: ' + new_opis_check[0] + '\n\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0])
         if '+нік ' in message.text or '+ник ' in message.text:
             user_id = message.from_user.id
             nickname = message.text[5:]
@@ -353,7 +353,7 @@ async def rp_commands(message: types.Message):
             firstname_reply = message.reply_to_message.from_user.first_name
             username_reply = message.reply_to_message.from_user.username
             if not db.check_id_bool(user_id_reply):
-                db.add_to_db(user_id_reply, username_reply, firstname_reply)
+                db.add_to_db(user_id_reply, username_reply, firstname_reply, '')
                 db.add_datetime(add_time, user_id_reply)
                 
             if db.check_nick(user_id_reply) == None:
@@ -456,7 +456,7 @@ async def rp_commands(message: types.Message):
         username = message.from_user.username
         firstname = message.from_user.first_name
         if not db.check_id_bool(user_id):
-            db.add_to_db(user_id, username, firstname)
+            db.add_to_db(user_id, username, firstname, '')
             db.add_datetime(add_time, user_id)
         
         if db.check_nick(user_id) == None:
@@ -469,11 +469,13 @@ async def rp_commands(message: types.Message):
         username = message.from_user.username
         firstname = message.from_user.first_name
         if not db.check_id_bool(user_id):
-            db.add_to_db(user_id, username, firstname)
+            db.add_to_db(user_id, username, firstname, '')
             db.add_datetime(add_time, user_id)
         
         if db.check_nick(user_id) == None:
             db.nick_user(firstname, user_id)
+            
+        
     
         
 if __name__ == '__main__':
