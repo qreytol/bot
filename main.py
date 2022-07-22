@@ -249,10 +249,7 @@ async def rp_commands(message: types.Message):
             
             @dp.callback_query_handler(text='twobtn')
             async def weather_right(query: types.CallbackQuery):
-                today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=1)
-                dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
