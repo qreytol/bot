@@ -10,7 +10,7 @@ from typing import final
 from xml.dom import ValidationErr
 from aiogram import Bot, Dispatcher, executor, types
 import time
-from datetime import timedelta,timezone,datetime
+import datetime
 import aiogram
 from click import command
 from numpy import integer
@@ -125,7 +125,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=1)
+                zavtra = today + datetime.timedelta(hours=3, days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -152,7 +152,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='left_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                pisla_zavtra = today + datetime.timedelta(days=2)
+                pisla_zavtra = today + datetime.timedelta(hours=3, days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -179,7 +179,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='thourbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=3)
+                zavtra = today + datetime.timedelta(hours=3, days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -206,7 +206,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='fivebtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=4)
+                zavtra = today + datetime.timedelta(hours=3, days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -233,7 +233,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='sixbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=5)
+                zavtra = today + datetime.timedelta(hours=3, days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -259,10 +259,7 @@ async def rp_commands(message: types.Message):
             
             @dp.callback_query_handler(text='twobtn')
             async def weather_right(query: types.CallbackQuery):
-                today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=0)
-                dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -312,7 +309,7 @@ async def rp_commands(message: types.Message):
 10) `цьом`
 ''', parse_mode='Markdown')
         if message.text == 'Test':
-            await message.reply(datetime.now())
+            await message.reply(datetime.datetime.now())
         if '+нік ' in message.text or '+ник ' in message.text:
             user_id = message.from_user.id
             nickname = message.text[5:]
