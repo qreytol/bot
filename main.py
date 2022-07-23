@@ -64,7 +64,7 @@ async def start(message: types.Message):
     username = message.from_user.username
     firstname = message.from_user.first_name
     if not db.check_nick(user_id):
-        db.add_to_db(user_id, username, firstname, '')
+        db.add_to_db(user_id, username, firstname)
         db.add_datetime(add_time, user_id)
     await bot.send_message(message.chat.id, f'''
 👨‍🔧Привіт [{firstname}](tg://user?id={user_id})
@@ -78,6 +78,16 @@ async def start(message: types.Message):
 @dp.message_handler(content_types='text')
 async def rp_commands(message: types.Message):
     try:
+        add_time = dtime.time(time.localtime())
+        user_id = message.from_user.id
+        username = message.from_user.username
+        firstname = message.from_user.first_name
+        if not db.check_id_bool(user_id):
+            db.add_to_db(user_id, username, firstname)
+            db.add_datetime(add_time, user_id)
+        
+        if db.check_nick(user_id) == None:
+            db.nick_user(firstname, user_id)
         if message.text == 'Хто я':
             my_user_id = message.from_user.id
             new_opis_check = db.check_opis(my_user_id)
@@ -115,7 +125,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=2)
+                zavtra = today + datetime.timedelta(days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -142,7 +152,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='left_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                pisla_zavtra = today + datetime.timedelta(days=3)
+                pisla_zavtra = today + datetime.timedelta(days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -169,7 +179,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='thourbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=4)
+                zavtra = today + datetime.timedelta(days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -196,7 +206,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='fivebtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=5)
+                zavtra = today + datetime.timedelta(days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -223,7 +233,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='sixbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=6)
+                zavtra = today + datetime.timedelta(days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -250,7 +260,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='twobtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=1)
+                zavtra = today + datetime.timedelta(days=0)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -301,6 +311,8 @@ async def rp_commands(message: types.Message):
 9) `сильно вдарити`
 10) `цьом`
 ''', parse_mode='Markdown')
+        if message.text == 'Test':
+            await message.reply(datetime.now())
         if '+нік ' in message.text or '+ник ' in message.text:
             user_id = message.from_user.id
             nickname = message.text[5:]
@@ -353,7 +365,7 @@ async def rp_commands(message: types.Message):
             firstname_reply = message.reply_to_message.from_user.first_name
             username_reply = message.reply_to_message.from_user.username
             if not db.check_id_bool(user_id_reply):
-                db.add_to_db(user_id_reply, username_reply, firstname_reply, '')
+                db.add_to_db(user_id_reply, username_reply, firstname_reply)
                 db.add_datetime(add_time, user_id_reply)
                 
             if db.check_nick(user_id_reply) == None:
@@ -365,90 +377,51 @@ async def rp_commands(message: types.Message):
             b = message.from_user.id
             d = message.reply_to_message.from_user.id
             nick_two_user = db.check_nick(d)[0]
-            opis_rp = message.text
             adm_check_adm = admbd.check_adm(d)[0]
             check_adm = admbd.check_adm(message.from_user.id)[0]
-            if message.text == '!адмінка':
+
+            if '+адмінка ' in message.text:
+                integer_for_adm_step = int(message.text[9:])
                 if check_adm >= 1:
-                    if adm_check_adm == 1:
-                        admbd.plus_adm(d)
-                        await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: 1 рівня', parse_mode='Markdown')
+                    if adm_check_adm <= 5:
+                        admbd.plus_adm(integer_for_adm_step, d)
+                        await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: {integer_for_adm_step} рівня', parse_mode='Markdown')
                     else:
                         await message.reply('Цей користувач вже має права на використання цієї команди')
                 else:
                     await message.reply('В тебе нема прав на використання такої команди(')
 
-            if message.text == '!!адмінка':
-                if check_adm >= 1:
-                    if adm_check_adm == 2:
-                        admbd.plus_two_adm(d)
-                        await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: 2 рівня', parse_mode='Markdown')
-                    else:
-                        await message.reply('Цей користувач вже має права на використання цієї команди')
-                else:
-                    await message.reply('В тебе нема прав на використання такої команди(')
-
-            if message.text == '!!!адмінка':
-                if check_adm >= 1:
-                    if adm_check_adm == 3:
-                        admbd.plus_three_adm(d)
-                        await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: 3 рівня', parse_mode='Markdown')
-                    else:
-                        await message.reply('Цей користувач вже має права на використання цієї команди')
-                else:
-                    await message.reply('В тебе нема прав на використання такої команди(')
-
-            if message.text == '!!!!адмінка':
-                if check_adm >= 1:
-                    if adm_check_adm == 4:
-                        admbd.plus_four_adm(d)
-                        await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: 4 рівня', parse_mode='Markdown')
-                    else:
-                        await message.reply('Цей користувач вже має права на використання цієї команди')
-                else:
-                    await message.reply('В тебе нема прав на використання такої команди(')
-
-            if message.text == '!!!!!адмінка':
-                if check_adm >= 1:
-                    if adm_check_adm == 5:
-                        admbd.plus_five_adm(d)
-                        await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: 5 рівня', parse_mode='Markdown')
-                    else:
-                        await message.reply('Цей користувач вже має права на використання цієї команди')
-                else:
-                    await message.reply('В тебе нема прав на використання такої команди(')
-
-            if message.text.lower() == 'зїсти':
+            if message.text == 'зїсти' or message.text == 'Зїсти':
                 await bot.send_message(message.chat.id, f"😅😋| [{nick_first_user}](tg://user?id={b}) з'їв [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
-        
-            if message.text.lower() == "погладити":
+                  
+            if message.text == "погладити" or message.text == 'Погладити':
                 await bot.send_message(message.chat.id, f"🥺🤭| [{nick_first_user}](tg://user?id={b}) погладив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
             
-            if message.text.lower() == "вбити":
+            if message.text == "вбити" or message.text == 'Вбити':
                 await bot.send_message(message.chat.id, f"😡🔪| [{nick_first_user}](tg://user?id={b}) вбив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                         
-            if message.text.lower() == "вдарити":
+            if message.text == "вдарити" or message.text == 'Вдарити':
                 await bot.send_message(message.chat.id, f"😡👎🏿| [{nick_first_user}](tg://user?id={b}) вдарив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                         
-            if message.text.lower() == "поцілувати":
+            if message.text == "поцілувати" or message.text == 'Поцілувати':
                 await bot.send_message(message.chat.id, f"😏😘| [{nick_first_user}](tg://user?id={b}) поцілував [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                         
-            if message.text.lower() == "кусь":
+            if message.text == "кусь" or message.text == 'Кусь':
                 await bot.send_message(message.chat.id, f"😋| [{nick_first_user}](tg://user?id={b}) кусьнув [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
             
-            if message.text.lower() == "спалити":
+            if message.text == "спалити" or message.text == 'Спалити':
                 await bot.send_message(message.chat.id, f"🤬🔥| [{nick_first_user}](tg://user?id={b}) спалив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
             
-            if message.text.lower() == "сильно вдарити":
+            if message.text == "сильно вдарити" or message.text == 'Сильно вдарити':
                 await bot.send_message(message.chat.id, f"😈👊| [{nick_first_user}](tg://user?id={b}) дуже сильно вдарив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')    
             
-            if message.text.lower() == "кохатися":
+            if message.text == "кохатися" or message.text == 'Кохатися':
                 await bot.send_message(message.chat.id, f"🥵❤️| [{nick_first_user}](tg://user?id={b}) жостко кохається з [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
         
-            if message.text.lower() == "цьом":
+            if message.text == "цьом" or message.text == 'Цьом':
                 await bot.send_message(message.chat.id, f"💓🌸| [{nick_first_user}](tg://user?id={b}) поцьомав [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                 
-            if message.text.lower() == 'дати підсрачника':
+            if message.text == 'дати підсрачника' or message.text == 'Дати підсрачника':
                 await bot.send_message(message.chat.id, f"🦶☺️| [{nick_first_user}](tg://user?id={b}) дав підсрачника [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
     except TypeError:
         add_time = dtime.time(time.localtime())
@@ -463,17 +436,6 @@ async def rp_commands(message: types.Message):
             db.nick_user(firstname, user_id)
     except UnboundLocalError:
         await message.reply('Такого міста не існує')
-    else:
-        add_time = dtime.time(time.localtime())
-        user_id = message.from_user.id
-        username = message.from_user.username
-        firstname = message.from_user.first_name
-        if not db.check_id_bool(user_id):
-            db.add_to_db(user_id, username, firstname, '')
-            db.add_datetime(add_time, user_id)
-        
-        if db.check_nick(user_id) == None:
-            db.nick_user(firstname, user_id)
             
         
     
