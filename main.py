@@ -42,7 +42,7 @@ db = SQLitedb('users.db')
 admbd = ADMcommand('users.db')
 
 #підключення бота
-bot = Bot(token='5370746338:AAFz2g5B_HTHMVFVmsOOzvpmSKRDnz3KaQQ')
+bot = Bot(token='5324556084:AAEg9g80LHMJVto9Gv2Cmahwl4bZ64MnQLk')
 
 #Диспетчер для  бота
 dp = Dispatcher(bot) 
@@ -69,11 +69,11 @@ async def start(message: types.Message):
     await bot.send_message(message.chat.id, f'''
 👨‍🔧Привіт [{firstname}](tg://user?id={user_id})
 
-🤖мене звати Петька 
+🤖мене звати Арнольд 
 
 😊Моя головна задача приглядувати за вашим чатом!!
 
-📝написавши команду `Допомога`, ти можеш дізнатись всі мої команди''', parse_mode='Markdown')
+📝написавши команду `Допомога`, ти можеш дізнатись всі мої команди''', reply_markup=inl.StartMenu, parse_mode='Markdown')
 
 @dp.message_handler(content_types='text')
 async def rp_commands(message: types.Message):
