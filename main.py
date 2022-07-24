@@ -41,14 +41,6 @@ bot = Bot(token='5324556084:AAEg9g80LHMJVto9Gv2Cmahwl4bZ64MnQLk')
 #Диспетчер для  бота
 dp = Dispatcher(bot) 
 
-#Додає нового юзера чата
-@dp.message_handler(content_types=['new_chat_members'])
-async def new_members_handler(message: types.Message):
-    new_member = message.new_chat_members
-    new_member = new_member[0].id
-    if not db.check_user(new_member):
-        db.add_to_db(new_member)
-    await bot.send_message(message.chat.id, new_member)
 
 #при команді /start перевіряє чи є юзер в БД, якщо немає то його додає
 @dp.message_handler(commands=['start'])
@@ -67,9 +59,7 @@ async def start(message: types.Message):
 
 😊Моя головна задача приглядувати за вашим чатом!!
 
-📝написавши команду `Допомога`, ти можеш дізнатись всі мої команди
-
-Щоб добавити мене в свою группу натисни на кнопку нище⬇️''', reply_markup=inl.StartMenu, parse_mode='Markdown')
+📝написавши команду `Допомога`, ти можеш дізнатись всі мої команди''', reply_markup=inl.StartMenu, parse_mode='Markdown')
 
 @dp.message_handler(content_types='text')
 async def rp_commands(message: types.Message):
@@ -85,10 +75,18 @@ async def rp_commands(message: types.Message):
         if db.check_nick(user_id) == None:
             db.nick_user(firstname, user_id)
         if message.text == 'Хто я':
+            #вертає інформацію про бота
             my_user_id = message.from_user.id
             new_opis_check = db.check_opis(my_user_id)
             await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐️ Статус адмінки: {admbd.check_adm(my_user_id)[0]}\n💬 Мій опис: ' + new_opis_check[0] + '\n\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0])
+
+        if message.from_user.id == 2071697765 and message.text == 'Фулл':
+            for i in db.full_users():
+                await message.reply(f'Ряд: {i[0]}\nАйді: {i[1]}\nЮзернейм: {i[2]}\nПол: {i[3]}\nНік: {i[4]}\nДата: {i[6]}\nСтатус АДМ: {i[7]}\nМісто: {i[8]}')
+                    
+        
         if 'Погода ' in message.text:
+            #показує детальну погоду з міста
             
             city = message.text[7:]
             split = city.split()
@@ -121,7 +119,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3, days=1)
+                zavtra = today + datetime.timedelta(days=1, hours=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -148,7 +146,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='left_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                pisla_zavtra = today + datetime.timedelta(hours=3, days=2)
+                pisla_zavtra = today + datetime.timedelta(days=2, hours=3)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -175,7 +173,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='thourbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3, days=3)
+                zavtra = today + datetime.timedelta(days=3, hours=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -202,7 +200,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='fivebtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3, days=4)
+                zavtra = today + datetime.timedelta(days=4, hours=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -229,7 +227,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='sixbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3, days=5)
+                zavtra = today + datetime.timedelta(days=5, hours=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -280,6 +278,7 @@ async def rp_commands(message: types.Message):
                 await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n☀️Ранок:\nВітер | {witer_rano} м/с\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\n🌤️День:\nВітер | {witer_den} м/с\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\n⭐Вечір:\nВітер | {witer_vechir} м/с\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}', reply_markup=inl.mainMenu)
             
         if message.text == 'Допомога' or message.text == 'допомога':
+            #Показує всі команди бота
             user_id = message.from_user.id
             await message.reply(f'''
 [📒](tg://user?id={user_id})На данний момент в мене є такі команди
@@ -287,7 +286,7 @@ async def rp_commands(message: types.Message):
 👌Основні:
 1) +ник | +нік
 2) Дата
-3) бан | кик | мут - можуть юзати тільки адміни (в розробці....)
+3) бан | кик | мут - тільки адміни можуть юзати
 4) !адмінка [реплай до юзера]
 5) Погода [місто] | приклад: Погода львів
 6) +опис 
@@ -304,31 +303,33 @@ async def rp_commands(message: types.Message):
 9) `сильно вдарити`
 10) `цьом`
 ''', parse_mode='Markdown')
-        if message.text == 'Test':
-            await message.reply(datetime.datetime.now())
         if '+нік ' in message.text or '+ник ' in message.text:
+            #міняє нік в боті
             user_id = message.from_user.id
             nickname = message.text[5:]
             db.nick_user(nickname, user_id)
             new_nick_check = db.check_nick(user_id)
             await bot.send_message(message.chat.id, '📒Твій новий нік: ' + new_nick_check[0])
         if '+опис ' in message.text:
+            #міняє опис в боті
             user_id = message.from_user.id
             nickname = message.text[6:]
             db.opis_user(nickname, user_id)
             new_opis_check = db.check_opis(user_id)
             await bot.send_message(message.chat.id, '📝Твій новий опис: ' + new_opis_check[0])
         if message.text == 'твій айді' or message.text == 'Твій айді':
+            #показує айді зареплаянного юзера
             youid = message.reply_to_message.from_user.id
             await bot.send_message(message.chat.id, youid)  
         if message.text.lower() == 'дата':
-            loc = datetime.datetime.now() + datetime.timedelta(hours=3)
-            locd = loc.strftime('%H')
-            locdt = loc.strftime('%M')
-            week = loc.strftime('%A')
-            month = loc.strftime('%B')
-            chislo = loc.strftime('%d')
-            fulldata = loc.strftime('%d:%m:%Y')
+            #показує локальну дату
+            loc = time.localtime()
+            locd = time.strftime('%H', loc)
+            locdt = time.strftime('%M', loc)
+            week = time.strftime('%A', loc)
+            month = time.strftime('%B', loc)
+            chislo = time.strftime('%d', loc)
+            fulldata = time.strftime('%d:%m:%Y', loc)
             await bot.send_message(message.chat.id, (f'⌚️ Час: {locd}:{locdt}\n⏰ День: {dtime.transweek(week)}\n📅 Дата: {chislo} | {dtime.transmonth(month)}\n⏳ Фулл дата: {fulldata}'))
         if message.text == 'Мій айді' or message.text == 'мій айді':
             #Вертає айді того хто то написав
@@ -374,6 +375,7 @@ async def rp_commands(message: types.Message):
             check_adm = admbd.check_adm(message.from_user.id)[0]
 
             if '+адмінка ' in message.text:
+                #дає адмінку юзеру
                 integer_for_adm_step = int(message.text[9:])
                 if check_adm >= 1:
                     if adm_check_adm <= 5:
