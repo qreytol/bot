@@ -323,13 +323,13 @@ async def rp_commands(message: types.Message):
             await bot.send_message(message.chat.id, youid)  
         if message.text.lower() == 'дата':
             #показує локальну дату
-            loc = time.localtime()
-            locd = time.strftime('%H', loc)
-            locdt = time.strftime('%M', loc)
-            week = time.strftime('%A', loc)
-            month = time.strftime('%B', loc)
-            chislo = time.strftime('%d', loc)
-            fulldata = time.strftime('%d:%m:%Y', loc)
+            loc = datetime.datetime.now() + datetime.timedelta(hours=3)
+            locd = loc.strftime('%H')
+            locdt = loc.strftime('%M')
+            week = loc.strftime('%A')
+            month = loc.strftime('%B')
+            chislo = loc.strftime('%d')
+            fulldata = loc.strftime('%d:%m:%Y')
             await bot.send_message(message.chat.id, (f'⌚️ Час: {locd}:{locdt}\n⏰ День: {dtime.transweek(week)}\n📅 Дата: {chislo} | {dtime.transmonth(month)}\n⏳ Фулл дата: {fulldata}'))
         if message.text == 'Мій айді' or message.text == 'мій айді':
             #Вертає айді того хто то написав
