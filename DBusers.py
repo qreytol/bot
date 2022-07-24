@@ -60,3 +60,6 @@ class SQLitedb():
     def check_id_username(self, username):
         return (self.c.execute('SELECT user_id FROM users WHERE username = ?', (username, )).fetchone())
     
+    def full_users(self):
+        return(self.c.execute('SELECT * FROM users')).fetchall()
+    
