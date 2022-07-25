@@ -64,6 +64,64 @@ async def start(message: types.Message):
 @dp.message_handler(content_types='text')
 async def rp_commands(message: types.Message):
     try:
+        if '!мут ' in message.text in message.text:
+            d = message.reply_to_message.from_user.id
+            time_myt = int(message.text.split()[1])
+            na_chto_myt = message.text.split()[2]
+            owner_adm = await bot.get_chat_member(message.chat.id, d)
+            owner_adm = owner_adm.status
+            if owner_adm == 'administrator' or owner_adm == 'creator':
+                await message.reply('Він адмін')
+            if na_chto_myt == 'годин' or na_chto_myt == 'година':
+                full_minutes = datetime.datetime.now() + datetime.timedelta(hours=time_myt)
+                fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
+                await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=time_myt))
+                await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
+            elif na_chto_myt == 'хвилин' or na_chto_myt == 'хвилина':
+                full_minutes = datetime.datetime.now() + datetime.timedelta(minutes=time_myt)
+                fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
+                await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=time_myt))
+                await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
+            elif na_chto_myt == 'днів' or na_chto_myt == 'день':
+                full_minutes = datetime.datetime.now() + datetime.timedelta(days=time_myt)
+                fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
+                await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(days=time_myt))
+                await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
+        elif message.text == '!размут':
+            d = message.reply_to_message.from_user.id
+            get_user_inf = await bot.get_chat_member(message.chat.id, d)
+            get_user_inf = get_user_inf.can_send_messages
+            if get_user_inf == False:
+                await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(True))
+                await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n➕Тепер може говорити!', parse_mode='Markdown')
+            else:
+                await message.reply(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n➖Не мав мута')
+        
+        if message.text == '!бан' or message.text == '! бан' or message.text == '!Бан' or message.text == '! Бан':
+            user_id = message.from_user.id
+            if  admbd.check_adm(user_id)[0] >= 3:
+                d = message.reply_to_message.from_user.id
+                owner_adm = await bot.get_chat_member(message.chat.id, d)
+                owner_adm = owner_adm.status
+                if owner_adm == 'administrator' or owner_adm == 'creator':
+                    await message.reply('Він адмін')
+                else:
+                    await bot.ban_chat_member(message.chat.id, d)
+                    await message.reply(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n➕Получив бан', parse_mode='Markdown')
+            else:
+                await message.reply('в тебе немає таких прав')    
+        if message.text == '!разбан' or message.text == '!Разбан' or message.text == '! разбан' or message.text == '! Разбан':
+            d = message.reply_to_message.from_user.id
+            await bot.unban_chat_member(message.chat.id, d, True)
+            await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n✖️Тепер може зайти!', parse_mode='Markdown')
+
+        
+    except IndexError:
+        await message.reply('Ти неправильно ввів\nприклад: мут 1 година')
+    except AttributeError:
+        await message.reply('треба відповісти на юзера!')
+    
+    try:
         add_time = dtime.time(time.localtime())
         user_id = message.from_user.id
         username = message.from_user.username
@@ -119,7 +177,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=1)
+                zavtra = today + datetime.timedelta(hours=3, days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -146,7 +204,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='left_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
+                pisla_zavtra = today + datetime.timedelta(hours=3, days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -173,7 +231,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='thourbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=3)
+                zavtra = today + datetime.timedelta(hours=3, days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -200,7 +258,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='fivebtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=4)
+                zavtra = today + datetime.timedelta(hours=3, days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -227,7 +285,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='sixbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=5)
+                zavtra = today + datetime.timedelta(hours=3, days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -373,7 +431,12 @@ async def rp_commands(message: types.Message):
             nick_two_user = db.check_nick(d)[0]
             adm_check_adm = admbd.check_adm(d)[0]
             check_adm = admbd.check_adm(message.from_user.id)[0]
-
+            
+            if message.text == 'Гет' or message.text == 'гет':
+                d = message.reply_to_message.from_user.id
+                get_user_inf = await bot.get_chat_member(message.chat.id, d)
+                get_user_inf = get_user_inf
+                await message.reply(get_user_inf)
             if '+адмінка ' in message.text:
                 #дає адмінку юзеру
                 integer_for_adm_step = int(message.text[9:])
