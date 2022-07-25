@@ -119,7 +119,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=1, hours=3)
+                zavtra = today + datetime.timedelta(hours=3,days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -146,7 +146,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='left_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                pisla_zavtra = today + datetime.timedelta(days=2, hours=3)
+                pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -173,7 +173,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='thourbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=3, hours=3)
+                zavtra = today + datetime.timedelta(hours=3,days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -200,7 +200,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='fivebtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=4, hours=3)
+                zavtra = today + datetime.timedelta(hours=3,days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -227,7 +227,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='sixbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(days=5, hours=3)
+                zavtra = today + datetime.timedelta(hours=3,days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
