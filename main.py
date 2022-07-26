@@ -65,29 +65,35 @@ async def start(message: types.Message):
 async def rp_commands(message: types.Message):
     try:
         if '!мут ' in message.text in message.text:
-            d = message.reply_to_message.from_user.id
-            time_myt = int(message.text.split()[1])
-            na_chto_myt = message.text.split()[2]
-            owner_adm = await bot.get_chat_member(message.chat.id, d)
-            owner_adm = owner_adm.status
-            if owner_adm == 'administrator' or owner_adm == 'creator':
-                await message.reply('Він адмін')
-            if na_chto_myt == 'годин' or na_chto_myt == 'година':
-                full_minutes = datetime.datetime.now() + datetime.timedelta(hours=time_myt)
-                fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
-                await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=time_myt))
-                await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
-            elif na_chto_myt == 'хвилин' or na_chto_myt == 'хвилина':
-                full_minutes = datetime.datetime.now() + datetime.timedelta(minutes=time_myt)
-                fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
-                await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=time_myt))
-                await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
-            elif na_chto_myt == 'днів' or na_chto_myt == 'день':
-                full_minutes = datetime.datetime.now() + datetime.timedelta(days=time_myt)
-                fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
-                await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(days=time_myt))
-                await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
-        elif message.text == '!размут':
+            user_id = message.from_user.id
+            if  admbd.check_adm(user_id)[0] >= 2:
+                d = message.reply_to_message.from_user.id
+                time_myt = int(message.text.split()[1])
+                na_chto_myt = message.text.split()[2]
+                owner_adm = await bot.get_chat_member(message.chat.id, d)
+                owner_adm = owner_adm.status
+                if owner_adm == 'administrator' or owner_adm == 'creator':
+                    await message.reply('Він адмін')
+                elif message.reply_to_message.from_user.id == message.from_user.id:
+                    await message.reply('Не можна себе мутити!')
+                elif na_chto_myt == 'годин' or na_chto_myt == 'година':
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=time_myt)
+                    fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=time_myt))
+                    await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
+                elif na_chto_myt == 'хвилин' or na_chto_myt == 'хвилина':
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(minutes=time_myt)
+                    fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=time_myt))
+                    await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
+                elif na_chto_myt == 'днів' or na_chto_myt == 'день':
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(days=time_myt)
+                    fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(days=time_myt))
+                    await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
+            else:
+                await message.reply('в тебе немає таких прав')  
+        if message.text == '!размут' or message.text == '!Размут' or message.text == '! размут' or message.text == '! Размут':
             d = message.reply_to_message.from_user.id
             get_user_inf = await bot.get_chat_member(message.chat.id, d)
             get_user_inf = get_user_inf.can_send_messages
@@ -105,6 +111,8 @@ async def rp_commands(message: types.Message):
                 owner_adm = owner_adm.status
                 if owner_adm == 'administrator' or owner_adm == 'creator':
                     await message.reply('Він адмін')
+                elif d == message.from_user.id:
+                    await message.reply('Не можна себе банити!')
                 else:
                     await bot.ban_chat_member(message.chat.id, d)
                     await message.reply(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n➕Получив бан', parse_mode='Markdown')
