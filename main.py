@@ -77,17 +77,17 @@ async def rp_commands(message: types.Message):
                 elif message.reply_to_message.from_user.id == message.from_user.id:
                     await message.reply('Не можна себе мутити!')
                 elif na_chto_myt == 'годин' or na_chto_myt == 'година':
-                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=(time_myt+3))
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=time_myt)
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
                     await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
                 elif na_chto_myt == 'хвилин' or na_chto_myt == 'хвилина':
-                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3 ,minutes=time_myt)
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(minutes=time_myt)
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
                     await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
                 elif na_chto_myt == 'днів' or na_chto_myt == 'день':
-                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3 ,days=time_myt)
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(days=time_myt)
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
                     await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(days=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
@@ -144,9 +144,69 @@ async def rp_commands(message: types.Message):
             #вертає інформацію про бота
             my_user_id = message.from_user.id
             new_opis_check = db.check_opis(my_user_id)
-            await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐️ Статус адмінки: {admbd.check_adm(my_user_id)[0]}\n💬 Мій опис: ' + new_opis_check[0] + '\n\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0])
+            check_adm_status = admbd.check_adm(my_user_id)[0]
+            if check_adm_status == 0:
+                @dp.callback_query_handler(text='getCommands')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer('⭐Ви вмієте:\n├ Ніхуя', parse_mode='Markdown')
+                    
+                @dp.callback_query_handler(text='getOpis')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer(f'⭐Твій опис: {db.check_opis(query.from_user.id)[0]}', parse_mode='Markdown')
+                    
+                await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐Адмінка: {check_adm_status} рівня\n⌛Ранг: Простий учасник\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0], reply_markup=inl.userKeyboard)
+            elif check_adm_status == 1:
+                @dp.callback_query_handler(text='getCommands')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer('⭐Ви вмієте:\n├ Ніхуя', parse_mode='Markdown')
+                    
+                @dp.callback_query_handler(text='getOpis')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer(f'⭐Твій опис: {db.check_opis(query.from_user.id)[0]}', parse_mode='Markdown')
+                    
+                await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐Адмінка: {check_adm_status} рівня\n⌛Ранг: Мл.адмін\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0], reply_markup=inl.userKeyboard)
+            elif check_adm_status == 2:
+                @dp.callback_query_handler(text='getCommands')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer('⭐Ви вмієте:\n├ Мутити', parse_mode='Markdown')
+                    
+                @dp.callback_query_handler(text='getOpis')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer(f'⭐Твій опис: {db.check_opis(query.from_user.id)[0]}', parse_mode='Markdown')
+                    
+                await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐Адмінка: {check_adm_status} рівня\n⌛Ранг: Гл.адмін\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0], reply_markup=inl.userKeyboard)
+            elif check_adm_status == 3:
+                @dp.callback_query_handler(text='getCommands')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer('⭐Ви вмієте:\n├ Банити\n╰ Мутити', parse_mode='Markdown')
+                    
+                @dp.callback_query_handler(text='getOpis')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer(f'⭐Твій опис: {db.check_opis(query.from_user.id)[0]}', parse_mode='Markdown')
+                    
+                await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐Адмінка: {check_adm_status} рівня\n⌛Ранг: Мл.модер\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0], reply_markup=inl.userKeyboard)
+            elif check_adm_status == 4:
+                @dp.callback_query_handler(text='getCommands')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer('⭐Ви вмієте:\n├ Банити\n╰ Мутити', parse_mode='Markdown')
+                    
+                @dp.callback_query_handler(text='getOpis')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer(f'⭐Твій опис: {db.check_opis(query.from_user.id)[0]}', parse_mode='Markdown')
+                    
+                await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐Адмінка: {check_adm_status} рівня\n⌛Ранг: Гл.модер\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0], reply_markup=inl.userKeyboard)
+            elif check_adm_status == 5:
+                @dp.callback_query_handler(text='getCommands')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer('⭐Ви вмієте:\n├ Банити\n├ Мутити\n╰ Получати всіх людей з БД (треба писати в лс боту)', parse_mode='Markdown')
+                    
+                @dp.callback_query_handler(text='getOpis')
+                async def weather_right(query: types.CallbackQuery):
+                    await query.message.answer(f'⭐Твій опис: {db.check_opis(query.from_user.id)[0]}', parse_mode='Markdown')
+                    
+                await bot.send_message(message.chat.id, '👤 Мій нік: ' + db.check_nick(my_user_id)[0] + f'\n\n⭐Адмінка: {check_adm_status} рівня\n⌛Ранг: Творець\n📅 Вперше з нами появився в: ' + db.check_datetime(my_user_id)[0], reply_markup=inl.userKeyboard)
 
-        if message.from_user.id == 2071697765 and message.text == 'Фулл':
+        if admbd.check_adm(message.from_user.id)[0] == 5 and message.text == 'Получити БД':
             for i in db.full_users():
                 await message.reply(f'Ряд: {i[0]}\nАйді: {i[1]}\nЮзернейм: {i[2]}\nПол: {i[3]}\nНік: {i[4]}\nДата: {i[6]}\nСтатус АДМ: {i[7]}\nМісто: {i[8]}')
                     
@@ -185,7 +245,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3 ,days=1)
+                zavtra = today + datetime.timedelta(hours=3,days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -212,7 +272,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='left_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                pisla_zavtra = today + datetime.timedelta(hours=3 ,days=2)
+                pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -239,7 +299,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='thourbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3 ,days=3)
+                zavtra = today + datetime.timedelta(hours=3,days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -266,7 +326,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='fivebtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3 ,days=4)
+                zavtra = today + datetime.timedelta(hours=3,days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -293,7 +353,7 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='sixbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3 ,days=5)
+                zavtra = today + datetime.timedelta(hours=3,days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
