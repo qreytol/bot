@@ -82,12 +82,12 @@ async def rp_commands(message: types.Message):
                     await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
                 elif na_chto_myt == 'хвилин' or na_chto_myt == 'хвилина':
-                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3, minutes=time_myt)
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3 ,minutes=time_myt)
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
                     await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
                 elif na_chto_myt == 'днів' or na_chto_myt == 'день':
-                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3, days=time_myt)
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3 ,days=time_myt)
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
                     await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(days=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
@@ -149,19 +149,8 @@ async def rp_commands(message: types.Message):
         if message.from_user.id == 2071697765 and message.text == 'Фулл':
             for i in db.full_users():
                 await message.reply(f'Ряд: {i[0]}\nАйді: {i[1]}\nЮзернейм: {i[2]}\nПол: {i[3]}\nНік: {i[4]}\nДата: {i[6]}\nСтатус АДМ: {i[7]}\nМісто: {i[8]}')
-        if message.reply_to_message:           
-            if '+адмінка ' in message.text:
-                #дає адмінку юзеру
-                integer_for_adm_step = int(message.text[9:])
-                if check_adm >= 1:
-                    if adm_check_adm <= 5:
-                        admbd.plus_adm(integer_for_adm_step, d)
-                        await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: {integer_for_adm_step} рівня', parse_mode='Markdown')
-                else:
-                    await message.reply('Цей користувач вже має права на використання цієї команди')
-            else:
-                await message.reply('В тебе нема прав на використання такої команди(')
-
+                    
+        
         if 'Погода ' in message.text:
             #показує детальну погоду з міста
             
@@ -196,9 +185,8 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='right_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3, days=1)
+                zavtra = today + datetime.timedelta(hours=3 ,days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
@@ -224,9 +212,8 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='left_weather')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                pisla_zavtra = today + datetime.timedelta(hours=3, days=2)
+                pisla_zavtra = today + datetime.timedelta(hours=3 ,days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
-                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
@@ -252,9 +239,8 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='thourbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3, days=3)
+                zavtra = today + datetime.timedelta(hours=3 ,days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
@@ -280,9 +266,8 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='fivebtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3, days=4)
+                zavtra = today + datetime.timedelta(hours=3 ,days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
@@ -308,9 +293,8 @@ async def rp_commands(message: types.Message):
             @dp.callback_query_handler(text='sixbtn')
             async def weather_right(query: types.CallbackQuery):
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3, days=5)
+                zavtra = today + datetime.timedelta(hours=3 ,days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
@@ -368,11 +352,10 @@ async def rp_commands(message: types.Message):
 👌Основні:
 1) +ник | +нік
 2) Дата
-3) бан | мут - тільки адміни можуть юзати [реплай до юзера]
+3) бан | кик | мут - тільки адміни можуть юзати
 4) !адмінка [реплай до юзера]
 5) Погода [місто] | приклад: Погода львів
 6) +опис 
-
 
 😊РП:
 1) `дати підсрачника`
@@ -433,7 +416,7 @@ async def rp_commands(message: types.Message):
         if message.text == 'Айді чата':
             #вертає айді чата
             await message.reply(f'`{message.chat.id}`', parse_mode='Markdown')
-        if message.text == 'Лів':
+        if message.text == 'Лив':
             #бот ліває з группи
             await bot.leave_chat(message.chat.id)
         if message.reply_to_message:
@@ -456,13 +439,17 @@ async def rp_commands(message: types.Message):
             nick_two_user = db.check_nick(d)[0]
             adm_check_adm = admbd.check_adm(d)[0]
             check_adm = admbd.check_adm(message.from_user.id)[0]
-          
+            
+            if message.text == 'Гет' or message.text == 'гет':
+                d = message.reply_to_message.from_user.id
+                get_user_inf = await bot.get_chat_member(message.chat.id, d)
+                get_user_inf = get_user_inf
+                await message.reply(get_user_inf)
             if '+адмінка ' in message.text:
                 #дає адмінку юзеру
                 integer_for_adm_step = int(message.text[9:])
                 if check_adm >= 1:
                     if adm_check_adm <= 5:
-                        d = message.reply_to_message.from_user.id
                         admbd.plus_adm(integer_for_adm_step, d)
                         await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: {integer_for_adm_step} рівня', parse_mode='Markdown')
                     else:
