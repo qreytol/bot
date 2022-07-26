@@ -98,7 +98,7 @@ async def rp_commands(message: types.Message):
             get_user_inf = await bot.get_chat_member(message.chat.id, d)
             get_user_inf = get_user_inf.can_send_messages
             if get_user_inf == False:
-                await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(True))
+                await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(True,True,True,True,True,True))
                 await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n➕Тепер може говорити!', parse_mode='Markdown')
             else:
                 await message.reply(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n➖Не мав мута')
