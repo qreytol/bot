@@ -349,10 +349,11 @@ async def rp_commands(message: types.Message):
 👌Основні:
 1) +ник | +нік
 2) Дата
-3) бан | кик | мут - тільки адміни можуть юзати
+3) бан | мут - тільки адміни можуть юзати [реплай до юзера]
 4) !адмінка [реплай до юзера]
 5) Погода [місто] | приклад: Погода львів
 6) +опис 
+
 
 😊РП:
 1) `дати підсрачника`
@@ -413,7 +414,7 @@ async def rp_commands(message: types.Message):
         if message.text == 'Айді чата':
             #вертає айді чата
             await message.reply(f'`{message.chat.id}`', parse_mode='Markdown')
-        if message.text == 'Лив':
+        if message.text == 'Лів':
             #бот ліває з группи
             await bot.leave_chat(message.chat.id)
         if message.reply_to_message:
@@ -436,12 +437,7 @@ async def rp_commands(message: types.Message):
             nick_two_user = db.check_nick(d)[0]
             adm_check_adm = admbd.check_adm(d)[0]
             check_adm = admbd.check_adm(message.from_user.id)[0]
-            
-            if message.text == 'Гет' or message.text == 'гет':
-                d = message.reply_to_message.from_user.id
-                get_user_inf = await bot.get_chat_member(message.chat.id, d)
-                get_user_inf = get_user_inf
-                await message.reply(get_user_inf)
+          
             if '+адмінка ' in message.text:
                 #дає адмінку юзеру
                 integer_for_adm_step = int(message.text[9:])
