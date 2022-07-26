@@ -11,35 +11,12 @@ class ADMcommand():
         '''Перевірка Адмінки'''
         return self.c.execute("SELECT adm FROM users WHERE user_id = ?", (user_id, )).fetchone()
     
-    def plus_adm(self, user_id):
-        '''+ Адмінка'''
-        self.c.execute("UPDATE users SET adm = 1 WHERE user_id = ?", (user_id, ))
-        self.conn.commit()
-
-    def plus_two_adm(self, user_id):
-        '''++ Адмінка'''
-        self.c.execute("UPDATE users SET adm = 2 WHERE user_id = ?", (user_id, ))
+    def plus_adm(self, chislo, user_id):
+        '''+адмінка'''
+        self.c.execute('UPDATE users SET adm = ? WHERE user_id = ?', (chislo, user_id, ))
         self.conn.commit()
         
-    def plus_three_adm(self, user_id):
-        '''+++ Адмінка'''
-        self.c.execute("UPDATE users SET adm = 3 WHERE user_id = ?", (user_id, ))
-        self.conn.commit()
         
-    def plus_four_adm(self, user_id):
-        '''++++ Адмінка'''
-        self.c.execute("UPDATE users SET adm = 4 WHERE user_id = ?", (user_id, ))
-        self.conn.commit()
-        
-    def plus_five_adm(self, user_id):
-        '''+++++ Адмінка'''
-        self.c.execute("UPDATE users SET adm = 5 WHERE user_id = ?", (user_id, ))
-        self.conn.commit()
-        
-    def minus_adm(self, user_id):
-        '''-адмінка'''
-        self.c.execute('UPDATE users SET adm = 0 WHERE user_id = ?', (user_id, ))
-        self.conn.commit()
 
 
 
