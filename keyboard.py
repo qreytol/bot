@@ -3,11 +3,11 @@ from DATETIME import date_time
 import datetime
 
 today = datetime.date.today()
-six_day = today + datetime.timedelta(hours=3, days=5)
-two_day = today + datetime.timedelta(hours=3, days=1)
-three_day = today + datetime.timedelta(hours=3, days=2)
-thour_day = today + datetime.timedelta(hours=3, days=3)
-five_day = today + datetime.timedelta(hours=3, days=4)
+six_day = today + datetime.timedelta(hours=3,days=5)
+two_day = today + datetime.timedelta(hours=3,days=1)
+three_day = today + datetime.timedelta(hours=3,days=2)
+thour_day = today + datetime.timedelta(hours=3,days=3)
+five_day = today + datetime.timedelta(hours=3,days=4)
 dtimee = date_time()
 
 week_two = two_day.strftime('%A')
@@ -16,6 +16,8 @@ week_thour = thour_day.strftime('%A')
 week_five = five_day.strftime('%A')
 week_six = six_day.strftime('%A')
 mainMenu = InlineKeyboardMarkup(row_width=3)
+
+userKeyboard = InlineKeyboardMarkup(row_width=2)
 
 StartMenu = InlineKeyboardMarkup()
 
@@ -27,6 +29,12 @@ sixBTN = InlineKeyboardButton(text=f'{dtimee.transweek(week_six)}', callback_dat
 twoBTN = InlineKeyboardButton(text='Сьогодні', callback_data='twobtn')
 
 startBTN = InlineKeyboardButton(text='Добавити', url='https://telegram.me/Arnold_new_chat_bot?startgroup=new')
+
+opisBTN = InlineKeyboardButton(text='📕Опис', callback_data='getOpis')
+statusBTN = InlineKeyboardButton(text='😊Що я вмію', callback_data='getCommands')
+
+userKeyboard.insert(opisBTN)
+userKeyboard.insert(statusBTN)
 
 StartMenu.insert(startBTN)
 
