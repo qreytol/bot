@@ -179,6 +179,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3, days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
@@ -206,6 +207,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 pisla_zavtra = today + datetime.timedelta(hours=3, days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
+                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
@@ -233,6 +235,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3, days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
@@ -260,6 +263,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3, days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
@@ -287,6 +291,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3, days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                print(dt_zavtra)
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
