@@ -451,6 +451,7 @@ async def rp_commands(message: types.Message):
                 integer_for_adm_step = int(message.text[9:])
                 if check_adm >= 1:
                     if adm_check_adm <= 5:
+                        d = message.reply_to_message.from_user.id
                         admbd.plus_adm(integer_for_adm_step, d)
                         await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: {integer_for_adm_step} рівня', parse_mode='Markdown')
                     else:
