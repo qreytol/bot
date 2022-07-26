@@ -79,17 +79,17 @@ async def rp_commands(message: types.Message):
                 elif na_chto_myt == 'годин' or na_chto_myt == 'година':
                     full_minutes = datetime.datetime.now() + datetime.timedelta(hours=(time_myt+3))
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
-                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=time_myt)
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
                 elif na_chto_myt == 'хвилин' or na_chto_myt == 'хвилина':
                     full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3, minutes=time_myt)
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
-                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=time_myt)
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
                 elif na_chto_myt == 'днів' or na_chto_myt == 'день':
                     full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3, days=time_myt)
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
-                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(days=time_myt)
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(days=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
             else:
                 await message.reply('в тебе немає таких прав')  
