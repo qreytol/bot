@@ -149,8 +149,19 @@ async def rp_commands(message: types.Message):
         if message.from_user.id == 2071697765 and message.text == 'Фулл':
             for i in db.full_users():
                 await message.reply(f'Ряд: {i[0]}\nАйді: {i[1]}\nЮзернейм: {i[2]}\nПол: {i[3]}\nНік: {i[4]}\nДата: {i[6]}\nСтатус АДМ: {i[7]}\nМісто: {i[8]}')
-                    
-        
+        if message.reply_to_message:           
+            if '+адмінка ' in message.text:
+                #дає адмінку юзеру
+                integer_for_adm_step = int(message.text[9:])
+                if check_adm >= 1:
+                    if adm_check_adm <= 5:
+                        admbd.plus_adm(integer_for_adm_step, d)
+                        await message.answer(f'👤Користувач [{nick_two_user}](tg://user?id={d})\n➕Получив доступ до Адмінки\n⚪Адмінка: {integer_for_adm_step} рівня', parse_mode='Markdown')
+                else:
+                    await message.reply('Цей користувач вже має права на використання цієї команди')
+            else:
+                await message.reply('В тебе нема прав на використання такої команди(')
+
         if 'Погода ' in message.text:
             #показує детальну погоду з міста
             
