@@ -60,7 +60,9 @@ async def start(message: types.Message):
 
 😊Моя головна задача приглядувати за вашим чатом!!
 
-📝написавши команду `Допомога`, ти можеш дізнатись всі мої команди''', reply_markup=inl.StartMenu, parse_mode='Markdown')
+📝написавши команду `Допомога`, ти зможеш дізнатись всі мої команди
+
+Щоб добавити мене в свій чат натисни на кнопку нище⬇️''', reply_markup=inl.StartMenu, parse_mode='Markdown')
 
 @dp.message_handler(content_types='text')
 async def rp_commands(message: types.Message):
@@ -153,7 +155,7 @@ async def rp_commands(message: types.Message):
             if check_adm_status == 0:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ Ніхуя', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n╰ Арнольд інфа \nДля більш детальної інформації напишіть `Допомога`' , parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -163,7 +165,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 1:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ Ніхуя', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n╰ Арнольд інфа \nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -173,7 +175,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 2:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ Мутити', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n╰ Арнольд інфа\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -183,7 +185,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 3:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ Банити\n╰ Мутити', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n╰ !Мут\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -193,7 +195,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 4:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ Банити\n╰ Мутити', parse_mode='Markdown')
+                    await query.message.answer('╰⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа \n├ !Мут\n╰ !Бан\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -203,7 +205,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 5:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ Банити\n├ Мутити\n╰ Получати всіх людей з БД (треба писати в лс боту)', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n├ !Мут\n├ !Бан\n╰ Получити БД\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -436,27 +438,17 @@ async def rp_commands(message: types.Message):
 [📒](tg://user?id={user_id})На данний момент в мене є такі команди
 
 👌Основні:
-1) +ник | +нік
-2) Дата
-3) бан | кик | мут - тільки адміни можуть юзати
-4) !адмінка [реплай до юзера]
+1) +ник | +нік - міняє нік в самому боті
+2) Дата | получаєш дату за теперішній час
+3) бан | кік | мут - тільки адміни можуть юзати
+4) +адмінка (рівень адмінки, з 1-5) [відповівши на користувача] | дає адмінку користувачу якому відповіли, приклад: +адмінка 3
 5) Погода [місто] | приклад: Погода львів
 6) +опис 
-7) Арнольд інфа | приклад: Арнольд інфа мені йти їсти???
+7) Арнольд інфа | приклад: Арнольд інфа мені йти їсти?
+8) хто я | получиш інформацыю про себе (статус адмінки в боті, нік в боті, які команди ти вмієш використовувати)
 
 😊РП:
-1) `дати підсрачника`
-2) `зїсти`
-3) `погладити`
-4) `поцілувати`
-5) `кохатися`
-6) `вбити`
-7) `кусь`
-8) `спалити`
-9) `сильно вдарити`
-10) `цьом`
-11) `отруїти`
-12) `покормити`
+В розробці...
 ''', parse_mode='Markdown')
         if '+нік ' in message.text or '+ник ' in message.text:
             #міняє нік в боті
