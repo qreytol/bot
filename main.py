@@ -143,7 +143,7 @@ async def rp_commands(message: types.Message):
             db.nick_user(firstname, user_id)
             
         if 'Арнольд інфа ' in message.text or 'арнольд інфа ' in message.text:
-            await message.reply(f'[🤔](tg://user?id={message.from_user.id}) я думаю, це правда на {random.randint(0,100)}%', parse_mode='Markdown')    
+            await message.reply(f'[🤔](tg://user?id={message.from_user.id}) я думаю, що ймовірність {random.randint(0,100)}%', parse_mode='Markdown')    
         
         if message.text == 'Хто я' or message.text == 'хто я':
             #вертає інформацію про бота
