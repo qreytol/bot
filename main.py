@@ -18,6 +18,7 @@ from DBusers import SQLitedb
 from DATETIME import date_time
 import random
 from ADMINS import ADMcommand
+import config
 import requests
 from bs4 import BeautifulSoup as BS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -69,13 +70,27 @@ async def start(message: types.Message):
         db.add_datetime(add_time, user_id)
     await bot.send_message(message.chat.id, f'''
 👨‍🔧Привіт [{firstname}](tg://user?id={user_id})
+
 🤖мене звати Арнольд 
+
 😊Моя головна задача приглядувати за вашим чатом!!
+
 📝написавши команду `Допомога`, ти зможеш дізнатись всі мої команди
+
 Щоб добавити мене в свій чат натисни на кнопку нище⬇️''', reply_markup=inl.StartMenu, parse_mode='Markdown')
 
 @dp.message_handler(content_types='text')
 async def rp_commands(message: types.Message):
+    add_time = dtime.time(time.localtime())
+    user_id = message.from_user.id
+    username = message.from_user.username
+    firstname = message.from_user.first_name
+    if not db.check_id_bool(user_id):
+        db.add_to_db(user_id, username, firstname)
+        db.add_datetime(add_time, user_id)
+        
+    if db.check_nick(user_id) == None:
+        db.nick_user(firstname, user_id)
     try:
         if 'Погода ' in message.text:
             #показує детальну погоду з міста
@@ -189,7 +204,7 @@ async def rp_commands(message: types.Message):
                         full_description = el.select('.wDescription .description')[0].text
                         
                         
-                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%⭐Повний опис:\n{full_description}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
 
                 if query.data == 'Short_weather_two':
                     today = datetime.date.today()
@@ -713,17 +728,6 @@ async def rp_commands(message: types.Message):
         await message.reply('треба відповісти на юзера!')
     
     try:
-        add_time = dtime.time(time.localtime())
-        user_id = message.from_user.id
-        username = message.from_user.username
-        firstname = message.from_user.first_name
-        if not db.check_id_bool(user_id):
-            db.add_to_db(user_id, username, firstname)
-            db.add_datetime(add_time, user_id)
-        
-        if db.check_nick(user_id) == None:
-            db.nick_user(firstname, user_id)
-            
         if 'Арнольд інфа ' in message.text or 'арнольд інфа ' in message.text:
             await message.reply(f'[🤔](tg://user?id={message.from_user.id}) я думаю, що ймовірність {random.randint(0,100)}%', parse_mode='Markdown')  
         
@@ -802,6 +806,7 @@ async def rp_commands(message: types.Message):
             user_id = message.from_user.id
             await message.reply(f'''
 [📒](tg://user?id={user_id})На данний момент в мене є такі команди
+
 👌Основні:
 1) +ник | +нік - міняє нік в самому боті
 2) Дата | получаєш дату за теперішній час
@@ -811,6 +816,7 @@ async def rp_commands(message: types.Message):
 6) +опис 
 7) Арнольд інфа | приклад: Арнольд інфа мені йти їсти?
 8) хто я | получиш інформацыю про себе (статус адмінки в боті, нік в боті, які команди ти вмієш використовувати)
+
 😊РП:
 1) `дати підсрачника`
 2) `зїсти`
@@ -958,11 +964,13 @@ async def rp_commands(message: types.Message):
         username = message.from_user.username
         firstname = message.from_user.first_name
         if not db.check_id_bool(user_id):
-            db.add_to_db(user_id, username, firstname, '')
+            db.add_to_db(user_id, username, firstname)
             db.add_datetime(add_time, user_id)
         
         if db.check_nick(user_id) == None:
             db.nick_user(firstname, user_id)
+    except Exception:
+        await bot.send_message(5112839866,'Помилка')
 
             
         
