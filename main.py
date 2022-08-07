@@ -18,11 +18,11 @@ from DBusers import SQLitedb
 from DATETIME import date_time
 import random
 from ADMINS import ADMcommand
-import config
 import requests
 from bs4 import BeautifulSoup as BS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import basic_keyboard as inl
+import cnfg
 
 from aiohttp import ContentTypeError
 
@@ -36,7 +36,7 @@ db = SQLitedb('users.db')
 admbd = ADMcommand('users.db')
 
 #підключення бота
-bot = Bot(token='5324556084:AAEg9g80LHMJVto9Gv2Cmahwl4bZ64MnQLk')
+bot = Bot(cnfg.token)
 
 #Диспетчер для  бота
 dp = Dispatcher(bot) 
