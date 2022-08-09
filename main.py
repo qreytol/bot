@@ -24,6 +24,8 @@ from bs4 import BeautifulSoup as BS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import basic_keyboard as inl
 import cnfg
+import os
+import sys
 
 from aiohttp import ContentTypeError
 
@@ -728,6 +730,8 @@ async def rp_commands(message: types.Message):
         await message.reply('треба відповісти на юзера!')
     
     try:
+        if message.text == 'TEST':
+            os.execv(sys.executable, [sys.executable] + sys.argv)
         if 'Арнольд інфа ' in message.text or 'арнольд інфа ' in message.text:
             await message.reply(f'[🤔](tg://user?id={message.from_user.id}) я думаю, що ймовірність {random.randint(0,100)}%', parse_mode='Markdown')  
         
