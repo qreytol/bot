@@ -730,7 +730,7 @@ async def rp_commands(message: types.Message):
         await message.reply('треба відповісти на юзера!')
     
     try:
-        if message.text == 'TEST':
+        if message.text == 'Рестарт' and admbd.check_adm(message.from_user.id)[0] == 5:
             os.execv(sys.executable, [sys.executable] + sys.argv)
         if 'Арнольд інфа ' in message.text or 'арнольд інфа ' in message.text:
             await message.reply(f'[🤔](tg://user?id={message.from_user.id}) я думаю, що ймовірність {random.randint(0,100)}%', parse_mode='Markdown')  
@@ -793,7 +793,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 5:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n├ !Мут\n├ !Бан\n╰ Получити БД\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n├ !Мут\n├ Получити БД\n╰ Рестарт\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
