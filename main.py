@@ -731,6 +731,7 @@ async def rp_commands(message: types.Message):
     
     try:
         if message.text == 'Рестарт' and admbd.check_adm(message.from_user.id)[0] == 5:
+            await bot.send_message(5112839866,'Хтось перезапустив бота')
             os.execv(sys.executable, [sys.executable] + sys.argv)
         if 'Арнольд інфа ' in message.text or 'арнольд інфа ' in message.text:
             await message.reply(f'[🤔](tg://user?id={message.from_user.id}) я думаю, що ймовірність {random.randint(0,100)}%', parse_mode='Markdown')  
