@@ -662,7 +662,9 @@ async def rp_commands(message: types.Message):
                     await query.message.edit_text(f'👤Користувач [{db.check_nick(message.from_user.id)[0]}](tg://user?id={message.from_user.id})\n👌Виберіть день за який хочете получити інформацію про погоду:', reply_markup=inl.mainMenu, parse_mode='Markdown')
     
     except UnboundLocalError:
-        await message.reply('Такого міста не існує')      
+        await message.reply('Такого міста не існує')
+    except KeyError:
+        await bot.send_message(5112839866,'Треба добавити якись день')
     
     try:
         if '!мут ' in message.text in message.text:
@@ -966,8 +968,8 @@ async def rp_commands(message: types.Message):
         
         if db.check_nick(user_id) == None:
             db.nick_user(firstname, user_id)
-    except KeyError:
-        await bot.send_message(5112839866,'Треба добавити якись день')
+    except Exception:
+        await bot.send_message(5112839866,'Помилка')
 
             
         
