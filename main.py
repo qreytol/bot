@@ -55,7 +55,8 @@ pogoda_emoji = {'Мінлива хмарність, дощ, можливі гр�
                 'Хмарно, дощ':'🌧️',
                 'Хмарно з проясненнями, дощ':'⛅🌧️',
                 'Хмарно, дощ, місцями сильний':'🌧️',
-                'Мінлива хмарність':'⛅'
+                'Мінлива хмарність':'⛅',
+                'Мінлива хмарність, невеликий дощ':'🌦️'
                 }
 
 #при команді /start перевіряє чи є юзер в БД, якщо немає то його додає
@@ -93,26 +94,24 @@ async def rp_commands(message: types.Message):
         db.nick_user(firstname, user_id)
         
     if 'Погода ' in message.text:
-        save_pogoda = []
-        try:
-            #показує детальну погоду з міста
-
-            city = message.text[7:]
-            split = city.split()
-            city_ok = '-'.join(split)
+        
+        city = message.text[7:]
+        split = city.split()
+        city_ok = '-'.join(split)
             
-            save_pogoda.append(city_ok)
-            url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0]
-            r = requests.get(url)
-            html = BS(r.content, 'lxml')
-            for el in html.select('#content'):
-                t_min = el.select('.temperature .min')[1].text
-            print(t_min)
-                
-            await message.reply(f'👤Користувач [{db.check_nick(message.from_user.id)[0]}](tg://user?id={message.from_user.id})\n👌Виберіть день за який хочете получити інформацію про погоду:', reply_markup=inl.mainMenu, parse_mode='Markdown')
+        url = 'https://ua.sinoptik.ua/погода-' + city_ok
+        r = requests.get(url)
+        html = BS(r.content, 'lxml')
+        for el in html.select('#wrapper'):
+            checkValidPlace = el.select('h1')[0].text
+            
+        if checkValidPlace == '404':
+            await message.reply('Такого міста не існує')
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+        else:
+            await message.reply(f'👤Користувач [{db.check_nick(message.from_user.id)[0]}](tg://user?id={message.from_user.id})\n*❗УВАГА* коли подивитесь погоду або захочите подивитись погоду в інакшому місті нажміть на кнопочку *➖Завершити* 😊\n👌Виберіть день за який хочете получити інформацію про погоду:', reply_markup=inl.mainMenu, parse_mode='Markdown')
 
-        except UnboundLocalError:
-            await message.reply('Такого міста не існує')   
+   
         @dp.callback_query_handler(text_contains='weather')
         async def weather_right(query: types.CallbackQuery):
             if query.data == 'one_weather':
@@ -145,7 +144,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3,days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -178,7 +177,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3,days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -221,7 +220,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 check_number_pogoda = html.find('div', id='content').find('div', id='leftCol').find('div', id='mainContentBlock').find('div', id='blockDays').find('div', attrs={'class': 'tabsContent'}).find('div', attrs={'class': 'tabsContentInner'}).find('div', attrs={'class': 'Tab', 'id':'bd3c'}).find('div', attrs={'class': 'wMain clearfix'}).find('div', attrs={'class': 'rSide'}).find('table', attrs={'class': 'weatherDetails'}).find('tbody').find('tr', attrs={'class': 'temperature'}).find('td', attrs={'class': 'p5'})
@@ -255,7 +254,7 @@ async def rp_commands(message: types.Message):
                     today = datetime.date.today()
                     pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
                     dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                     r = requests.get(url)
                     html = BS(r.content, 'lxml')
                     for el in html.select('#content'):
@@ -288,7 +287,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 check_number_pogoda = html.find('div', id='content').find('div', id='leftCol').find('div', id='mainContentBlock').find('div', id='blockDays').find('div', attrs={'class': 'tabsContent'}).find('div', attrs={'class': 'tabsContentInner'}).find('div', attrs={'class': 'Tab', 'id':'bd3c'}).find('div', attrs={'class': 'wMain clearfix'}).find('div', attrs={'class': 'rSide'}).find('table', attrs={'class': 'weatherDetails'}).find('tbody').find('tr', attrs={'class': 'temperature'}).find('td', attrs={'class': 'p5'})
@@ -331,7 +330,7 @@ async def rp_commands(message: types.Message):
                     today = datetime.date.today()
                     pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
                     dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                     r = requests.get(url)
                     html = BS(r.content, 'lxml')
                     for el in html.select('#content'):
@@ -373,7 +372,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3,days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -406,7 +405,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3,days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -448,7 +447,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3,days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -481,7 +480,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3,days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -524,7 +523,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3,days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -557,7 +556,7 @@ async def rp_commands(message: types.Message):
                 today = datetime.date.today()
                 zavtra = today + datetime.timedelta(hours=3,days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -596,7 +595,7 @@ async def rp_commands(message: types.Message):
                 await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
 
             if query.data == 'Short_weather_today':
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0]
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -627,7 +626,7 @@ async def rp_commands(message: types.Message):
                 await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
 
             if query.data == 'Detail_weather_today':
-                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0]
+                url = 'https://ua.sinoptik.ua/погода-' + city_ok
                 r = requests.get(url)
                 html = BS(r.content, 'lxml')
                 for el in html.select('#content'):
@@ -667,8 +666,12 @@ async def rp_commands(message: types.Message):
                 await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
                 
             if query.data == 'Nazad_weather':
-                await query.message.edit_text(f'👤Користувач [{db.check_nick(message.from_user.id)[0]}](tg://user?id={message.from_user.id})\n👌Виберіть день за який хочете получити інформацію про погоду:', reply_markup=inl.mainMenu, parse_mode='Markdown')   
-    
+                await query.message.edit_text(f'👤Користувач [{db.check_nick(message.from_user.id)[0]}](tg://user?id={message.from_user.id})\n👌Виберіть день за який хочете получити інформацію про погоду:', reply_markup=inl.mainMenu, parse_mode='Markdown')
+                    
+            if query.data == 'Restart_weather':
+                await bot.send_message(message.chat.id, 'Тепер ви можете спокійно користуватись ботом!')
+                os.execv(sys.executable, [sys.executable] + sys.argv)
+
     try:
         if '!мут ' in message.text in message.text:
             user_id = message.from_user.id
