@@ -60,8 +60,10 @@ mainMenu.insert(twoBTN)
 mainMenuNazad = InlineKeyboardMarkup()
 
 NazadBTNS = InlineKeyboardButton(text='❌Назад', callback_data='Nazad_weather')
+RestartBTNS = InlineKeyboardButton(text='➖Завершити', callback_data='Restart_weather')
 
 mainMenuNazad.insert(NazadBTNS)
+mainMenuNazad.insert(RestartBTNS)
 
 MenuDetailOrShortOne = InlineKeyboardMarkup(row_width=3)
 
