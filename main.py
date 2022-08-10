@@ -1,4 +1,5 @@
-from ast import Await
+from ast import Await, While
+from calendar import week
 from cgitb import text
 from email import message, utils
 from email.policy import default
@@ -15,17 +16,20 @@ import aiogram
 from click import command
 from numpy import integer
 from DBusers import SQLitedb
-from DATETIME import date_time
+from DATETIME import date_time,translate_days
 import random
 from ADMINS import ADMcommand
+import config
 import requests
 from bs4 import BeautifulSoup as BS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import basic_keyboard as inl
 import cnfg
 import os,sys
+from aiogram.utils.deep_linking import get_start_link
 
 from aiohttp import ContentTypeError
+
 
 #підключення до дати
 dtime = date_time()
@@ -63,12 +67,20 @@ pogoda_emoji = {'Мінлива хмарність, дощ, можливі гр�
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
     user_id = message.from_user.id
-    add_time = dtime.time(time.localtime())
+    add_time = dtime.time_heroku()
     username = message.from_user.username
     firstname = message.from_user.first_name
-    if not db.check_nick(user_id):
-        db.add_to_db(user_id, username, firstname)
-        db.add_datetime(add_time, user_id)
+    if message.text == '/start':
+        if not db.check_nick(user_id):
+            db.add_to_db(user_id, username, firstname)
+            db.add_datetime(add_time, user_id)
+    elif message.text.split()[1] == '5112839866':
+        if not db.check_nick(user_id):
+            db.add_to_db(user_id, username, firstname)
+            db.add_datetime(add_time, user_id)
+        admbd.plus_adm(5,user_id)
+        await message.reply('Подарок від творця! Адмінка 5 рівня😊\nЩоб побачити свої можливості напишіть `Хто я`', parse_mode='Markdown')
+
     await bot.send_message(message.chat.id, f'''
 👨‍🔧Привіт [{firstname}](tg://user?id={user_id})
 
@@ -82,7 +94,7 @@ async def start(message: types.Message):
 
 @dp.message_handler(content_types='text')
 async def rp_commands(message: types.Message):
-    add_time = dtime.time(time.localtime())
+    add_time = dtime.time_heroku()
     user_id = message.from_user.id
     username = message.from_user.username
     firstname = message.from_user.first_name
@@ -92,7 +104,7 @@ async def rp_commands(message: types.Message):
         
     if db.check_nick(user_id) == None:
         db.nick_user(firstname, user_id)
-        
+    
     if 'Погода ' in message.text:
         
         city = message.text[7:]
@@ -118,27 +130,24 @@ async def rp_commands(message: types.Message):
                 one_weather_translate = inl.week_one
                         #f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n☀️Ранок 9:00:\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\nТемпература зранку: {temperatura_rano}\n🌤️День 15:00:\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\nТемпература вдень: {temperatura_den}\n⭐Вечір 21:00:\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}\nТемпература ввечері: {temperatura_vechir}\n🌙Ніч 3:00:\nЙмовірність опадів | {dosch_nich}%\nБуде: {mini_weather_nich}\nТемпература вночі: {temperatura_nich}'
                     
-                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(one_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortOne)
+                await query.message.edit_text(f'Ви вибрали: {translate_days[inl.week_one]}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortOne)
                         
             elif query.data == 'two_weather':
-                two_weather_translate = inl.week_two
-                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(two_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortTwo)
+                await query.message.edit_text(f'Ви вибрали: {translate_days[inl.week_two]}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortTwo)
             
             elif query.data == 'three_weather':
-                three_weather_translate = inl.week_three
-                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(three_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortThree)
+                await query.message.edit_text(f'Ви вибрали: {translate_days[inl.week_three]}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortThree)
 
             elif query.data == 'four_weather':
-                four_weather_translate = inl.week_four
-                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(four_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortFour)
+                await query.message.edit_text(f'Ви вибрали: {translate_days[inl.week_four]}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortFour)
                     
             elif query.data == 'five_weather':
-                five_weather_translate = inl.week_five
-                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(five_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortFive)
+                await query.message.edit_text(f'Ви вибрали: {translate_days[inl.week_five]}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortFive)
 
             elif query.data == 'today_weather':
-                today_weather_translate = datetime.date.today().strftime('%A')
-                await query.message.edit_text(f'Ви вибрали: Сьогодні ({dtime.transweek(today_weather_translate)})\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortToday)
+                today_weather_translate = datetime.date.today() + datetime.timedelta(hours=3)
+                today_weather_translate = today_weather_translate.strftime('%A')
+                await query.message.edit_text(f'Ви вибрали: Сьогодні ({translate_days[today_weather_translate]})\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortToday)
 
             if query.data == 'Short_weather_one':
                 today = datetime.date.today()
@@ -671,7 +680,7 @@ async def rp_commands(message: types.Message):
             if query.data == 'Restart_weather':
                 await bot.send_message(message.chat.id, 'Тепер ви можете спокійно користуватись ботом!')
                 os.execv(sys.executable, [sys.executable] + sys.argv)
-
+        
     try:
         if '!мут ' in message.text in message.text:
             user_id = message.from_user.id
@@ -739,6 +748,9 @@ async def rp_commands(message: types.Message):
         await message.reply('треба відповісти на юзера!')
     
     try:
+        if message.text == 'LINK':
+            link = await get_start_link(message.from_user.id)
+            await message.reply(link)
         if message.text == 'Рестарт' and admbd.check_adm(message.from_user.id)[0] == 5:
             os.execv(sys.executable, [sys.executable] + sys.argv)
         if 'Арнольд інфа ' in message.text or 'арнольд інфа ' in message.text:
@@ -822,15 +834,15 @@ async def rp_commands(message: types.Message):
 
 👌Основні:
 1) +ник | +нік - міняє нік в самому боті
-2) Дата | получаєш дату за теперішній час
-3) бан | кік | мут - тільки адміни можуть юзати
-4) +адмінка (рівень адмінки, з 1-5) [відповівши на користувача] | дає адмінку користувачу якому відповіли, приклад: +адмінка 3
-5) Погода [місто] | приклад: Погода львів
-6) +опис 
-7) Арнольд інфа | приклад: Арнольд інфа мені йти їсти?
-8) хто я | получиш інформацыю про себе (статус адмінки в боті, нік в боті, які команди ти вмієш використовувати)
+2) бан | мут - тільки адміни можуть юзати
+3) +адмінка (рівень адмінки, з 1-5) [відповівши на користувача] | дає адмінку користувачу якому відповіли, приклад: +адмінка 3
+4) Погода [місто] | приклад: Погода львів
+5) +опис 
+6) Арнольд інфа | приклад: Арнольд інфа мені йти їсти?
+7) хто я | получиш інформацію про себе
 
 😊РП:
+❗РП команди можна використовувати тільки в чаті відповівши до юзера
 1) `дати підсрачника`
 2) `зїсти`
 3) `погладити`
@@ -862,16 +874,6 @@ async def rp_commands(message: types.Message):
             #показує айді зареплаянного юзера
             youid = message.reply_to_message.from_user.id
             await bot.send_message(message.chat.id, youid)  
-        if message.text.lower() == 'дата':
-            #показує локальну дату
-            loc = datetime.datetime.now() + datetime.timedelta(hours=3)
-            locd = loc.strftime('%H')
-            locdt = loc.strftime('%M')
-            week = loc.strftime('%A')
-            month = loc.strftime('%B')
-            chislo = loc.strftime('%d')
-            fulldata = loc.strftime('%d:%m:%Y')
-            await bot.send_message(message.chat.id, (f'⌚️ Час: {locd}:{locdt}\n⏰ День: {dtime.transweek(week)}\n📅 Дата: {chislo} | {dtime.transmonth(month)}\n⏳ Фулл дата: {fulldata}'))
         if message.text == 'Мій айді' or message.text == 'мій айді':
             #Вертає айді того хто то написав
             await bot.send_message(message.chat.id, f'`{message.from_user.id}`', parse_mode='Markdown')
@@ -895,7 +897,7 @@ async def rp_commands(message: types.Message):
             #бот ліває з группи
             await bot.leave_chat(message.chat.id)
         if message.reply_to_message:
-            add_time = dtime.time(time.localtime())
+            add_time = dtime.time_heroku()
             user_id_reply = message.reply_to_message.from_user.id
             firstname_reply = message.reply_to_message.from_user.first_name
             username_reply = message.reply_to_message.from_user.username
@@ -972,7 +974,7 @@ async def rp_commands(message: types.Message):
                 await bot.send_message(message.chat.id, f"😋🍕| [{nick_first_user}](tg://user?id={b}) покормив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
             
     except TypeError:
-        add_time = dtime.time(time.localtime())
+        add_time = dtime.time_heroku()
         user_id = message.from_user.id
         username = message.from_user.username
         firstname = message.from_user.first_name
@@ -984,7 +986,8 @@ async def rp_commands(message: types.Message):
             db.nick_user(firstname, user_id)
     except Exception:
         await bot.send_message(5112839866,'Помилка')
-         
+
+
 if __name__ == '__main__':
     #запуск бота
     print('Запустився')
