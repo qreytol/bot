@@ -18,14 +18,12 @@ from DBusers import SQLitedb
 from DATETIME import date_time
 import random
 from ADMINS import ADMcommand
-import config
 import requests
 from bs4 import BeautifulSoup as BS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import basic_keyboard as inl
 import cnfg
-import os
-import sys
+import os,sys
 
 from aiohttp import ContentTypeError
 
@@ -57,8 +55,7 @@ pogoda_emoji = {'Мінлива хмарність, дощ, можливі гр�
                 'Хмарно, дощ':'🌧️',
                 'Хмарно з проясненнями, дощ':'⛅🌧️',
                 'Хмарно, дощ, місцями сильний':'🌧️',
-                'Мінлива хмарність':'⛅',
-                'Мінлива хмарність, невеликий дощ':'🌧️'
+                'Мінлива хмарність':'⛅'
                 }
 
 #при команді /start перевіряє чи є юзер в БД, якщо немає то його додає
@@ -94,59 +91,180 @@ async def rp_commands(message: types.Message):
         
     if db.check_nick(user_id) == None:
         db.nick_user(firstname, user_id)
-    try:
-        if 'Погода ' in message.text:
+        
+    if 'Погода ' in message.text:
+        save_pogoda = []
+        try:
             #показує детальну погоду з міста
-            
+
             city = message.text[7:]
             split = city.split()
             city_ok = '-'.join(split)
+            
+            save_pogoda.append(city_ok)
+            url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0]
+            r = requests.get(url)
+            html = BS(r.content, 'lxml')
+            for el in html.select('#content'):
+                t_min = el.select('.temperature .min')[1].text
+            print(t_min)
                 
             await message.reply(f'👤Користувач [{db.check_nick(message.from_user.id)[0]}](tg://user?id={message.from_user.id})\n👌Виберіть день за який хочете получити інформацію про погоду:', reply_markup=inl.mainMenu, parse_mode='Markdown')
-            
-            
-            @dp.callback_query_handler(text_contains='weather')
-            async def weather_right(query: types.CallbackQuery):
-                if query.data == 'one_weather':
-                    one_weather_translate = inl.week_one
+
+        except UnboundLocalError:
+            await message.reply('Такого міста не існує')   
+        @dp.callback_query_handler(text_contains='weather')
+        async def weather_right(query: types.CallbackQuery):
+            if query.data == 'one_weather':
+                one_weather_translate = inl.week_one
                         #f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n☀️Ранок 9:00:\nЙмовірність опадів | {dosch_rano}%\nБуде: {mini_weather_rano}\nТемпература зранку: {temperatura_rano}\n🌤️День 15:00:\nЙмовірність опадів | {dosch_den}%\nБуде: {mini_weather_den}\nТемпература вдень: {temperatura_den}\n⭐Вечір 21:00:\nЙмовірність опадів | {dosch_vechir}%\nБуде: {mini_weather_vechir}\nТемпература ввечері: {temperatura_vechir}\n🌙Ніч 3:00:\nЙмовірність опадів | {dosch_nich}%\nБуде: {mini_weather_nich}\nТемпература вночі: {temperatura_nich}'
                     
-                    await query.message.edit_text(f'Ви вибрали: {dtime.transweek(one_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortOne)
+                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(one_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortOne)
                         
-                elif query.data == 'two_weather':
-                    two_weather_translate = inl.week_two
-                    await query.message.edit_text(f'Ви вибрали: {dtime.transweek(two_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortTwo)
+            elif query.data == 'two_weather':
+                two_weather_translate = inl.week_two
+                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(two_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortTwo)
             
-                elif query.data == 'three_weather':
-                    three_weather_translate = inl.week_three
-                    await query.message.edit_text(f'Ви вибрали: {dtime.transweek(three_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortThree)
+            elif query.data == 'three_weather':
+                three_weather_translate = inl.week_three
+                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(three_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortThree)
 
-                elif query.data == 'four_weather':
-                    four_weather_translate = inl.week_four
-                    await query.message.edit_text(f'Ви вибрали: {dtime.transweek(four_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortFour)
+            elif query.data == 'four_weather':
+                four_weather_translate = inl.week_four
+                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(four_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortFour)
                     
-                elif query.data == 'five_weather':
-                    five_weather_translate = inl.week_five
-                    await query.message.edit_text(f'Ви вибрали: {dtime.transweek(five_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortFive)
+            elif query.data == 'five_weather':
+                five_weather_translate = inl.week_five
+                await query.message.edit_text(f'Ви вибрали: {dtime.transweek(five_weather_translate)}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortFive)
 
-                elif query.data == 'today_weather':
-                    today_weather_translate = datetime.date.today().strftime('%A')
-                    await query.message.edit_text(f'Ви вибрали: Сьогодні ({dtime.transweek(today_weather_translate)})\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortToday)
+            elif query.data == 'today_weather':
+                today_weather_translate = datetime.date.today().strftime('%A')
+                await query.message.edit_text(f'Ви вибрали: Сьогодні ({dtime.transweek(today_weather_translate)})\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortToday)
 
-                if query.data == 'Short_weather_one':
+            if query.data == 'Short_weather_one':
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(hours=3,days=1)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[1].text
+                    t_max = el.select('.temperature .max')[1].text
+                    min_text = el.select('.weatherIco')[1]['title']
+                    day_pars = el.select('.day-link')[1].text
+                    month_pars = el.select('.date')[1].text
+                    day_name = el.select('.month')[1].text
+                    dosch_rano = el.select('tr .p4')[7].text
+                    dosch_den = el.select('tr .p6')[7].text
+                    dosch_vechir = el.select('tr .p8')[7].text
+                    dosch_nich = el.select('tr .p2')[7].text
+                    temperatura_rano = el.select('.temperature .p4')[0].text
+                    temperatura_den = el.select('.temperature .p6')[0].text
+                    temperatura_vechir = el.select('.temperature .p8')[0].text
+                    temperatura_nich = el.select('.temperature .p2')[0].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    mini_weather_rano = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p6 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p8 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p2 .weatherIco')[0]['title']
+                        
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+                
+            if query.data == 'Detail_weather_one':
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(hours=3,days=1)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[1].text
+                    t_max = el.select('.temperature .max')[1].text
+                    min_text = el.select('.weatherIco')[1]['title']
+                    day_pars = el.select('.day-link')[1].text
+                    month_pars = el.select('.date')[1].text
+                    day_name = el.select('.month')[1].text
+                    dosch_rano = el.select('tr .p4')[7].text
+                    dosch_den = el.select('tr .p6')[7].text
+                    dosch_vechir = el.select('tr .p8')[7].text
+                    dosch_nich = el.select('tr .p2')[7].text
+                    temperatura_rano = el.select('.temperature .p4')[0].text
+                    temperatura_den = el.select('.temperature .p6')[0].text
+                    temperatura_vechir = el.select('.temperature .p8')[0].text
+                    temperatura_nich = el.select('.temperature .p2')[0].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    mini_weather_rano = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p6 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p8 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p2 .weatherIco')[0]['title']
+                    witer_rano = el.select('.gray .p4')[2].text
+                    witer_den = el.select('.gray .p6')[2].text
+                    witer_vechir = el.select('.gray .p8')[2].text
+                    witer_nich = el.select('.gray .p2')[2].text
+                    vologist_rano = el.select('tr .p4')[5].text
+                    vologist_den = el.select('tr .p6')[5].text
+                    vologist_vechir = el.select('tr .p8')[5].text
+                    vologist_nich = el.select('tr .p2')[5].text
+                    full_description = el.select('.wDescription .description')[0].text
+                        
+                        
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+
+            if query.data == 'Short_weather_two':
+                today = datetime.date.today()
+                pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
+                dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                check_number_pogoda = html.find('div', id='content').find('div', id='leftCol').find('div', id='mainContentBlock').find('div', id='blockDays').find('div', attrs={'class': 'tabsContent'}).find('div', attrs={'class': 'tabsContentInner'}).find('div', attrs={'class': 'Tab', 'id':'bd3c'}).find('div', attrs={'class': 'wMain clearfix'}).find('div', attrs={'class': 'rSide'}).find('table', attrs={'class': 'weatherDetails'}).find('tbody').find('tr', attrs={'class': 'temperature'}).find('td', attrs={'class': 'p5'})
+                if check_number_pogoda == None:
+                    for el in html.select('#content'):
+                        t_min = el.select('.temperature .min')[2].text
+                        t_max = el.select('.temperature .max')[2].text
+                        min_text = el.select('.weatherIco')[2]['title']
+                        day_pars = el.select('.day-link')[2].text
+                        month_pars = el.select('.date')[2].text
+                        day_name = el.select('.month')[2].text
+                        dosch_rano = el.select('tr .p2')[7].text
+                        dosch_den = el.select('tr .p3')[7].text
+                        dosch_vechir = el.select('tr .p4')[7].text
+                        dosch_nich = el.select('tr .p1')[7].text
+                        temperatura_rano = el.select('.temperature .p2')[0].text
+                        temperatura_den = el.select('.temperature .p3')[0].text
+                        temperatura_vechir = el.select('.temperature .p4')[0].text
+                        temperatura_nich = el.select('.temperature .p1')[0].text
+                        dosch_rano = dosch_rano.replace('-', '0')
+                        dosch_den = dosch_den.replace('-', '0')
+                        dosch_vechir = dosch_vechir.replace('-', '0')
+                        dosch_nich = dosch_nich.replace('-', '0')
+                        mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
+                        mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
+                        mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
+                        mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
+                    
+                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+                else:
                     today = datetime.date.today()
-                    zavtra = today + datetime.timedelta(hours=3,days=1)
-                    dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                    pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
+                    dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
+                    url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
                     r = requests.get(url)
                     html = BS(r.content, 'lxml')
                     for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[1].text
-                        t_max = el.select('.temperature .max')[1].text
-                        min_text = el.select('.weatherIco')[1]['title']
-                        day_pars = el.select('.day-link')[1].text
-                        month_pars = el.select('.date')[1].text
-                        day_name = el.select('.month')[1].text
+                        t_min = el.select('.temperature .min')[2].text
+                        t_max = el.select('.temperature .max')[2].text
+                        min_text = el.select('.weatherIco')[2]['title']
+                        day_pars = el.select('.day-link')[2].text
+                        month_pars = el.select('.date')[2].text
+                        day_name = el.select('.month')[2].text
                         dosch_rano = el.select('tr .p4')[7].text
                         dosch_den = el.select('tr .p6')[7].text
                         dosch_vechir = el.select('tr .p8')[7].text
@@ -163,23 +281,66 @@ async def rp_commands(message: types.Message):
                         mini_weather_den = el.select('.img .p6 .weatherIco')[0]['title']
                         mini_weather_vechir = el.select('.img .p8 .weatherIco')[0]['title']
                         mini_weather_nich = el.select('.img .p2 .weatherIco')[0]['title']
-                        
+                    
                     await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
                 
-                elif query.data == 'Detail_weather_one':
+            if query.data == 'Detail_weather_two':
+                today = datetime.date.today()
+                pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
+                dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                check_number_pogoda = html.find('div', id='content').find('div', id='leftCol').find('div', id='mainContentBlock').find('div', id='blockDays').find('div', attrs={'class': 'tabsContent'}).find('div', attrs={'class': 'tabsContentInner'}).find('div', attrs={'class': 'Tab', 'id':'bd3c'}).find('div', attrs={'class': 'wMain clearfix'}).find('div', attrs={'class': 'rSide'}).find('table', attrs={'class': 'weatherDetails'}).find('tbody').find('tr', attrs={'class': 'temperature'}).find('td', attrs={'class': 'p5'})
+                if check_number_pogoda == None:
+                    for el in html.select('#content'):
+                        t_min = el.select('.temperature .min')[2].text
+                        t_max = el.select('.temperature .max')[2].text
+                        min_text = el.select('.weatherIco')[2]['title']
+                        day_pars = el.select('.day-link')[2].text
+                        month_pars = el.select('.date')[2].text
+                        day_name = el.select('.month')[2].text
+                        dosch_rano = el.select('tr .p2')[7].text
+                        dosch_den = el.select('tr .p3')[7].text
+                        dosch_vechir = el.select('tr .p4')[7].text
+                        dosch_nich = el.select('tr .p1')[7].text
+                        temperatura_rano = el.select('.temperature .p2')[0].text
+                        temperatura_den = el.select('.temperature .p3')[0].text
+                        temperatura_vechir = el.select('.temperature .p4')[0].text
+                        temperatura_nich = el.select('.temperature .p1')[0].text
+                        dosch_rano = dosch_rano.replace('-', '0')
+                        dosch_den = dosch_den.replace('-', '0')
+                        dosch_vechir = dosch_vechir.replace('-', '0')
+                        dosch_nich = dosch_nich.replace('-', '0')
+                        mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
+                        mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
+                        mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
+                        mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
+                        witer_rano = el.select('.gray .p2')[2].text
+                        witer_den = el.select('.gray .p3')[2].text
+                        witer_vechir = el.select('.gray .p4')[2].text
+                        witer_nich = el.select('.gray .p1')[2].text
+                        vologist_rano = el.select('tr .p2')[5].text
+                        vologist_den = el.select('tr .p3')[5].text
+                        vologist_vechir = el.select('tr .p4')[5].text
+                        vologist_nich = el.select('tr .p1')[5].text
+                        full_description = el.select('.wDescription .description')[0].text
+                    
+                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+                else:
                     today = datetime.date.today()
-                    zavtra = today + datetime.timedelta(hours=3,days=1)
-                    dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
+                    pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
+                    dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
+                    url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
                     r = requests.get(url)
                     html = BS(r.content, 'lxml')
                     for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[1].text
-                        t_max = el.select('.temperature .max')[1].text
-                        min_text = el.select('.weatherIco')[1]['title']
-                        day_pars = el.select('.day-link')[1].text
-                        month_pars = el.select('.date')[1].text
-                        day_name = el.select('.month')[1].text
+                        t_min = el.select('.temperature .min')[2].text
+                        t_max = el.select('.temperature .max')[2].text
+                        min_text = el.select('.weatherIco')[2]['title']
+                        day_pars = el.select('.day-link')[2].text
+                        month_pars = el.select('.date')[2].text
+                        day_name = el.select('.month')[2].text
                         dosch_rano = el.select('tr .p4')[7].text
                         dosch_den = el.select('tr .p6')[7].text
                         dosch_vechir = el.select('tr .p8')[7].text
@@ -205,466 +366,308 @@ async def rp_commands(message: types.Message):
                         vologist_vechir = el.select('tr .p8')[5].text
                         vologist_nich = el.select('tr .p2')[5].text
                         full_description = el.select('.wDescription .description')[0].text
-                        
-                        
-                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
-
-                if query.data == 'Short_weather_two':
-                    today = datetime.date.today()
-                    pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
-                    dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    check_number_pogoda = html.find('div', id='content').find('div', id='leftCol').find('div', id='mainContentBlock').find('div', id='blockDays').find('div', attrs={'class': 'tabsContent'}).find('div', attrs={'class': 'tabsContentInner'}).find('div', attrs={'class': 'Tab', 'id':'bd3c'}).find('div', attrs={'class': 'wMain clearfix'}).find('div', attrs={'class': 'rSide'}).find('table', attrs={'class': 'weatherDetails'}).find('tbody').find('tr', attrs={'class': 'temperature'}).find('td', attrs={'class': 'p5'})
-                    if check_number_pogoda == None:
-                        for el in html.select('#content'):
-                            t_min = el.select('.temperature .min')[2].text
-                            t_max = el.select('.temperature .max')[2].text
-                            min_text = el.select('.weatherIco')[2]['title']
-                            day_pars = el.select('.day-link')[2].text
-                            month_pars = el.select('.date')[2].text
-                            day_name = el.select('.month')[2].text
-                            dosch_rano = el.select('tr .p2')[7].text
-                            dosch_den = el.select('tr .p3')[7].text
-                            dosch_vechir = el.select('tr .p4')[7].text
-                            dosch_nich = el.select('tr .p1')[7].text
-                            temperatura_rano = el.select('.temperature .p2')[0].text
-                            temperatura_den = el.select('.temperature .p3')[0].text
-                            temperatura_vechir = el.select('.temperature .p4')[0].text
-                            temperatura_nich = el.select('.temperature .p1')[0].text
-                            dosch_rano = dosch_rano.replace('-', '0')
-                            dosch_den = dosch_den.replace('-', '0')
-                            dosch_vechir = dosch_vechir.replace('-', '0')
-                            dosch_nich = dosch_nich.replace('-', '0')
-                            mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
-                            mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
-                            mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
-                            mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
-                    
-                        await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
-                    else:
-                        today = datetime.date.today()
-                        pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
-                        dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
-                        url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                        r = requests.get(url)
-                        html = BS(r.content, 'lxml')
-                        for el in html.select('#content'):
-                            t_min = el.select('.temperature .min')[2].text
-                            t_max = el.select('.temperature .max')[2].text
-                            min_text = el.select('.weatherIco')[2]['title']
-                            day_pars = el.select('.day-link')[2].text
-                            month_pars = el.select('.date')[2].text
-                            day_name = el.select('.month')[2].text
-                            dosch_rano = el.select('tr .p4')[7].text
-                            dosch_den = el.select('tr .p6')[7].text
-                            dosch_vechir = el.select('tr .p8')[7].text
-                            dosch_nich = el.select('tr .p2')[7].text
-                            temperatura_rano = el.select('.temperature .p4')[0].text
-                            temperatura_den = el.select('.temperature .p6')[0].text
-                            temperatura_vechir = el.select('.temperature .p8')[0].text
-                            temperatura_nich = el.select('.temperature .p2')[0].text
-                            dosch_rano = dosch_rano.replace('-', '0')
-                            dosch_den = dosch_den.replace('-', '0')
-                            dosch_vechir = dosch_vechir.replace('-', '0')
-                            dosch_nich = dosch_nich.replace('-', '0')
-                            mini_weather_rano = el.select('.img .p4 .weatherIco')[0]['title']
-                            mini_weather_den = el.select('.img .p6 .weatherIco')[0]['title']
-                            mini_weather_vechir = el.select('.img .p8 .weatherIco')[0]['title']
-                            mini_weather_nich = el.select('.img .p2 .weatherIco')[0]['title']
-                    
-                        await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
-                
-                elif query.data == 'Detail_weather_two':
-                    today = datetime.date.today()
-                    pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
-                    dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    check_number_pogoda = html.find('div', id='content').find('div', id='leftCol').find('div', id='mainContentBlock').find('div', id='blockDays').find('div', attrs={'class': 'tabsContent'}).find('div', attrs={'class': 'tabsContentInner'}).find('div', attrs={'class': 'Tab', 'id':'bd3c'}).find('div', attrs={'class': 'wMain clearfix'}).find('div', attrs={'class': 'rSide'}).find('table', attrs={'class': 'weatherDetails'}).find('tbody').find('tr', attrs={'class': 'temperature'}).find('td', attrs={'class': 'p5'})
-                    if check_number_pogoda == None:
-                        for el in html.select('#content'):
-                            t_min = el.select('.temperature .min')[2].text
-                            t_max = el.select('.temperature .max')[2].text
-                            min_text = el.select('.weatherIco')[2]['title']
-                            day_pars = el.select('.day-link')[2].text
-                            month_pars = el.select('.date')[2].text
-                            day_name = el.select('.month')[2].text
-                            dosch_rano = el.select('tr .p2')[7].text
-                            dosch_den = el.select('tr .p3')[7].text
-                            dosch_vechir = el.select('tr .p4')[7].text
-                            dosch_nich = el.select('tr .p1')[7].text
-                            temperatura_rano = el.select('.temperature .p2')[0].text
-                            temperatura_den = el.select('.temperature .p3')[0].text
-                            temperatura_vechir = el.select('.temperature .p4')[0].text
-                            temperatura_nich = el.select('.temperature .p1')[0].text
-                            dosch_rano = dosch_rano.replace('-', '0')
-                            dosch_den = dosch_den.replace('-', '0')
-                            dosch_vechir = dosch_vechir.replace('-', '0')
-                            dosch_nich = dosch_nich.replace('-', '0')
-                            mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
-                            mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
-                            mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
-                            mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
-                            witer_rano = el.select('.gray .p2')[2].text
-                            witer_den = el.select('.gray .p3')[2].text
-                            witer_vechir = el.select('.gray .p4')[2].text
-                            witer_nich = el.select('.gray .p1')[2].text
-                            vologist_rano = el.select('tr .p2')[5].text
-                            vologist_den = el.select('tr .p3')[5].text
-                            vologist_vechir = el.select('tr .p4')[5].text
-                            vologist_nich = el.select('tr .p1')[5].text
-                            full_description = el.select('.wDescription .description')[0].text
-                    
-                        await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
-                    else:
-                        today = datetime.date.today()
-                        pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
-                        dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
-                        url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                        r = requests.get(url)
-                        html = BS(r.content, 'lxml')
-                        for el in html.select('#content'):
-                            t_min = el.select('.temperature .min')[2].text
-                            t_max = el.select('.temperature .max')[2].text
-                            min_text = el.select('.weatherIco')[2]['title']
-                            day_pars = el.select('.day-link')[2].text
-                            month_pars = el.select('.date')[2].text
-                            day_name = el.select('.month')[2].text
-                            dosch_rano = el.select('tr .p4')[7].text
-                            dosch_den = el.select('tr .p6')[7].text
-                            dosch_vechir = el.select('tr .p8')[7].text
-                            dosch_nich = el.select('tr .p2')[7].text
-                            temperatura_rano = el.select('.temperature .p4')[0].text
-                            temperatura_den = el.select('.temperature .p6')[0].text
-                            temperatura_vechir = el.select('.temperature .p8')[0].text
-                            temperatura_nich = el.select('.temperature .p2')[0].text
-                            dosch_rano = dosch_rano.replace('-', '0')
-                            dosch_den = dosch_den.replace('-', '0')
-                            dosch_vechir = dosch_vechir.replace('-', '0')
-                            dosch_nich = dosch_nich.replace('-', '0')
-                            mini_weather_rano = el.select('.img .p4 .weatherIco')[0]['title']
-                            mini_weather_den = el.select('.img .p6 .weatherIco')[0]['title']
-                            mini_weather_vechir = el.select('.img .p8 .weatherIco')[0]['title']
-                            mini_weather_nich = el.select('.img .p2 .weatherIco')[0]['title']
-                            witer_rano = el.select('.gray .p4')[2].text
-                            witer_den = el.select('.gray .p6')[2].text
-                            witer_vechir = el.select('.gray .p8')[2].text
-                            witer_nich = el.select('.gray .p2')[2].text
-                            vologist_rano = el.select('tr .p4')[5].text
-                            vologist_den = el.select('tr .p6')[5].text
-                            vologist_vechir = el.select('tr .p8')[5].text
-                            vologist_nich = el.select('tr .p2')[5].text
-                            full_description = el.select('.wDescription .description')[0].text
-                    
-                        await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
-                
-                if query.data == 'Short_weather_three':
-                    today = datetime.date.today()
-                    zavtra = today + datetime.timedelta(hours=3,days=3)
-                    dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[3].text
-                        t_max = el.select('.temperature .max')[3].text
-                        min_text = el.select('.weatherIco')[3]['title']
-                        day_pars = el.select('.day-link')[3].text
-                        month_pars = el.select('.date')[3].text
-                        day_name = el.select('.month')[3].text
-                        dosch_rano = el.select('tr .p2')[7].text
-                        dosch_den = el.select('tr .p3')[7].text
-                        dosch_vechir = el.select('tr .p4')[7].text
-                        dosch_nich = el.select('tr .p1')[7].text
-                        temperatura_rano = el.select('.temperature .p2')[0].text
-                        temperatura_den = el.select('.temperature .p3')[0].text
-                        temperatura_vechir = el.select('.temperature .p4')[0].text
-                        temperatura_nich = el.select('.temperature .p1')[0].text
-                        dosch_rano = dosch_rano.replace('-', '0')
-                        dosch_den = dosch_den.replace('-', '0')
-                        dosch_vechir = dosch_vechir.replace('-', '0')
-                        dosch_nich = dosch_nich.replace('-', '0')
-                        mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
-                        mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
-                        mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
-                        mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
-                    
-                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
-
-                elif query.data == 'Detail_weather_three':
-                    today = datetime.date.today()
-                    zavtra = today + datetime.timedelta(hours=3,days=3)
-                    dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[3].text
-                        t_max = el.select('.temperature .max')[3].text
-                        min_text = el.select('.weatherIco')[3]['title']
-                        day_pars = el.select('.day-link')[3].text
-                        month_pars = el.select('.date')[3].text
-                        day_name = el.select('.month')[3].text
-                        dosch_rano = el.select('tr .p2')[7].text
-                        dosch_den = el.select('tr .p3')[7].text
-                        dosch_vechir = el.select('tr .p4')[7].text
-                        dosch_nich = el.select('tr .p1')[7].text
-                        temperatura_rano = el.select('.temperature .p2')[0].text
-                        temperatura_den = el.select('.temperature .p3')[0].text
-                        temperatura_vechir = el.select('.temperature .p4')[0].text
-                        temperatura_nich = el.select('.temperature .p1')[0].text
-                        dosch_rano = dosch_rano.replace('-', '0')
-                        dosch_den = dosch_den.replace('-', '0')
-                        dosch_vechir = dosch_vechir.replace('-', '0')
-                        dosch_nich = dosch_nich.replace('-', '0')
-                        mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
-                        mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
-                        mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
-                        mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
-                        witer_rano = el.select('.gray .p2')[2].text
-                        witer_den = el.select('.gray .p3')[2].text
-                        witer_vechir = el.select('.gray .p4')[2].text
-                        witer_nich = el.select('.gray .p1')[2].text
-                        vologist_rano = el.select('tr .p2')[5].text
-                        vologist_den = el.select('tr .p3')[5].text
-                        vologist_vechir = el.select('tr .p4')[5].text
-                        vologist_nich = el.select('tr .p1')[5].text
-                        full_description = el.select('.wDescription .description')[0].text
                     
                     await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+                
+            if query.data == 'Short_weather_three':
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(hours=3,days=3)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[3].text
+                    t_max = el.select('.temperature .max')[3].text
+                    min_text = el.select('.weatherIco')[3]['title']
+                    day_pars = el.select('.day-link')[3].text
+                    month_pars = el.select('.date')[3].text
+                    day_name = el.select('.month')[3].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    dosch_nich = el.select('tr .p1')[7].text
+                    temperatura_rano = el.select('.temperature .p2')[0].text
+                    temperatura_den = el.select('.temperature .p3')[0].text
+                    temperatura_vechir = el.select('.temperature .p4')[0].text
+                    temperatura_nich = el.select('.temperature .p1')[0].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
                     
-                if query.data == 'Short_weather_four':
-                    today = datetime.date.today()
-                    zavtra = today + datetime.timedelta(hours=3,days=4)
-                    dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[4].text
-                        t_max = el.select('.temperature .max')[4].text
-                        min_text = el.select('.weatherIco')[4]['title']
-                        day_pars = el.select('.day-link')[4].text
-                        month_pars = el.select('.date')[4].text
-                        day_name = el.select('.month')[4].text
-                        dosch_rano = el.select('tr .p2')[7].text
-                        dosch_den = el.select('tr .p3')[7].text
-                        dosch_vechir = el.select('tr .p4')[7].text
-                        dosch_nich = el.select('tr .p1')[7].text
-                        temperatura_rano = el.select('.temperature .p2')[0].text
-                        temperatura_den = el.select('.temperature .p3')[0].text
-                        temperatura_vechir = el.select('.temperature .p4')[0].text
-                        temperatura_nich = el.select('.temperature .p1')[0].text
-                        dosch_rano = dosch_rano.replace('-', '0')
-                        dosch_den = dosch_den.replace('-', '0')
-                        dosch_vechir = dosch_vechir.replace('-', '0')
-                        dosch_nich = dosch_nich.replace('-', '0')
-                        mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
-                        mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
-                        mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
-                        mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
 
-                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
-
-                elif query.data == 'Detail_weather_four':
-                    today = datetime.date.today()
-                    zavtra = today + datetime.timedelta(hours=3,days=4)
-                    dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[4].text
-                        t_max = el.select('.temperature .max')[4].text
-                        min_text = el.select('.weatherIco')[4]['title']
-                        day_pars = el.select('.day-link')[4].text
-                        month_pars = el.select('.date')[4].text
-                        day_name = el.select('.month')[4].text
-                        dosch_rano = el.select('tr .p2')[7].text
-                        dosch_den = el.select('tr .p3')[7].text
-                        dosch_vechir = el.select('tr .p4')[7].text
-                        dosch_nich = el.select('tr .p1')[7].text
-                        temperatura_rano = el.select('.temperature .p2')[0].text
-                        temperatura_den = el.select('.temperature .p3')[0].text
-                        temperatura_vechir = el.select('.temperature .p4')[0].text
-                        temperatura_nich = el.select('.temperature .p1')[0].text
-                        dosch_rano = dosch_rano.replace('-', '0')
-                        dosch_den = dosch_den.replace('-', '0')
-                        dosch_vechir = dosch_vechir.replace('-', '0')
-                        dosch_nich = dosch_nich.replace('-', '0')
-                        mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
-                        mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
-                        mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
-                        mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
-                        witer_rano = el.select('.gray .p2')[2].text
-                        witer_den = el.select('.gray .p3')[2].text
-                        witer_vechir = el.select('.gray .p4')[2].text
-                        witer_nich = el.select('.gray .p1')[2].text
-                        vologist_rano = el.select('tr .p2')[5].text
-                        vologist_den = el.select('tr .p3')[5].text
-                        vologist_vechir = el.select('tr .p4')[5].text
-                        vologist_nich = el.select('tr .p1')[5].text
-                        full_description = el.select('.wDescription .description')[0].text
-
-                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
-
-                
-                if query.data == 'Short_weather_five':
-                    today = datetime.date.today()
-                    zavtra = today + datetime.timedelta(hours=3,days=5)
-                    dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[5].text
-                        t_max = el.select('.temperature .max')[5].text
-                        min_text = el.select('.weatherIco')[5]['title']
-                        day_pars = el.select('.day-link')[5].text
-                        month_pars = el.select('.date')[5].text
-                        day_name = el.select('.month')[5].text
-                        dosch_rano = el.select('tr .p2')[7].text
-                        dosch_den = el.select('tr .p3')[7].text
-                        dosch_vechir = el.select('tr .p4')[7].text
-                        dosch_nich = el.select('tr .p1')[7].text
-                        temperatura_rano = el.select('.temperature .p2')[0].text
-                        temperatura_den = el.select('.temperature .p3')[0].text
-                        temperatura_vechir = el.select('.temperature .p4')[0].text
-                        temperatura_nich = el.select('.temperature .p1')[0].text
-                        dosch_rano = dosch_rano.replace('-', '0')
-                        dosch_den = dosch_den.replace('-', '0')
-                        dosch_vechir = dosch_vechir.replace('-', '0')
-                        dosch_nich = dosch_nich.replace('-', '0')
-                        mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
-                        mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
-                        mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
-                        mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
+            if query.data == 'Detail_weather_three':
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(hours=3,days=3)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[3].text
+                    t_max = el.select('.temperature .max')[3].text
+                    min_text = el.select('.weatherIco')[3]['title']
+                    day_pars = el.select('.day-link')[3].text
+                    month_pars = el.select('.date')[3].text
+                    day_name = el.select('.month')[3].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    dosch_nich = el.select('tr .p1')[7].text
+                    temperatura_rano = el.select('.temperature .p2')[0].text
+                    temperatura_den = el.select('.temperature .p3')[0].text
+                    temperatura_vechir = el.select('.temperature .p4')[0].text
+                    temperatura_nich = el.select('.temperature .p1')[0].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
+                    witer_rano = el.select('.gray .p2')[2].text
+                    witer_den = el.select('.gray .p3')[2].text
+                    witer_vechir = el.select('.gray .p4')[2].text
+                    witer_nich = el.select('.gray .p1')[2].text
+                    vologist_rano = el.select('tr .p2')[5].text
+                    vologist_den = el.select('tr .p3')[5].text
+                    vologist_vechir = el.select('tr .p4')[5].text
+                    vologist_nich = el.select('tr .p1')[5].text
+                    full_description = el.select('.wDescription .description')[0].text
                     
-                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
-
-                elif query.data == 'Detail_weather_five':
-                    today = datetime.date.today()
-                    zavtra = today + datetime.timedelta(hours=3,days=5)
-                    dt_zavtra = zavtra.strftime('%Y-%m-%d')
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[5].text
-                        t_max = el.select('.temperature .max')[5].text
-                        min_text = el.select('.weatherIco')[5]['title']
-                        day_pars = el.select('.day-link')[5].text
-                        month_pars = el.select('.date')[5].text
-                        day_name = el.select('.month')[5].text
-                        dosch_rano = el.select('tr .p2')[7].text
-                        dosch_den = el.select('tr .p3')[7].text
-                        dosch_vechir = el.select('tr .p4')[7].text
-                        dosch_nich = el.select('tr .p1')[7].text
-                        temperatura_rano = el.select('.temperature .p2')[0].text
-                        temperatura_den = el.select('.temperature .p3')[0].text
-                        temperatura_vechir = el.select('.temperature .p4')[0].text
-                        temperatura_nich = el.select('.temperature .p1')[0].text
-                        dosch_rano = dosch_rano.replace('-', '0')
-                        dosch_den = dosch_den.replace('-', '0')
-                        dosch_vechir = dosch_vechir.replace('-', '0')
-                        dosch_nich = dosch_nich.replace('-', '0')
-                        mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
-                        mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
-                        mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
-                        mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
-                        witer_rano = el.select('.gray .p2')[2].text
-                        witer_den = el.select('.gray .p3')[2].text
-                        witer_vechir = el.select('.gray .p4')[2].text
-                        witer_nich = el.select('.gray .p1')[2].text
-                        vologist_rano = el.select('tr .p2')[5].text
-                        vologist_den = el.select('tr .p3')[5].text
-                        vologist_vechir = el.select('tr .p4')[5].text
-                        vologist_nich = el.select('tr .p1')[5].text
-                        full_description = el.select('.wDescription .description')[0].text
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
                     
-                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+            if query.data == 'Short_weather_four':
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(hours=3,days=4)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[4].text
+                    t_max = el.select('.temperature .max')[4].text
+                    min_text = el.select('.weatherIco')[4]['title']
+                    day_pars = el.select('.day-link')[4].text
+                    month_pars = el.select('.date')[4].text
+                    day_name = el.select('.month')[4].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    dosch_nich = el.select('tr .p1')[7].text
+                    temperatura_rano = el.select('.temperature .p2')[0].text
+                    temperatura_den = el.select('.temperature .p3')[0].text
+                    temperatura_vechir = el.select('.temperature .p4')[0].text
+                    temperatura_nich = el.select('.temperature .p1')[0].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
 
-                if query.data == 'Short_weather_today':
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[0].text
-                        t_max = el.select('.temperature .max')[0].text
-                        min_text = el.select('.weatherIco')[0]['title']
-                        day_pars = el.select('.day-link')[0].text
-                        month_pars = el.select('.date')[0].text
-                        day_name = el.select('.month')[0].text
-                        zaraz = el.select('.imgBlock .today-temp')[0].text
-                        dosch_rano = el.select('tr .p4')[7].text
-                        dosch_den = el.select('tr .p6')[7].text
-                        dosch_vechir = el.select('tr .p8')[7].text
-                        dosch_nich = el.select('tr .p2')[7].text
-                        dosch_rano = dosch_rano.replace('-', '0')
-                        dosch_den = dosch_den.replace('-', '0')
-                        dosch_vechir = dosch_vechir.replace('-', '0')
-                        dosch_nich = dosch_nich.replace('-', '0')
-                        temperatura_rano = el.select('.temperature .p4')[0].text
-                        temperatura_den = el.select('.temperature .p6')[0].text
-                        temperatura_vechir = el.select('.temperature .p8')[0].text
-                        temperatura_nich = el.select('.temperature .p2')[0].text
-                        mini_weather_rano = el.select('.img .p4 .weatherIco')[0]['title']
-                        mini_weather_den = el.select('.img .p6 .weatherIco')[0]['title']
-                        mini_weather_vechir = el.select('.img .p8 .weatherIco')[0]['title']
-                        mini_weather_nich = el.select('.img .p2 .weatherIco')[0]['title']
-                
-                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
 
-                elif query.data == 'Detail_weather_today':
-                    url = 'https://ua.sinoptik.ua/погода-' + city_ok
-                    r = requests.get(url)
-                    html = BS(r.content, 'lxml')
-                    for el in html.select('#content'):
-                        t_min = el.select('.temperature .min')[0].text
-                        t_max = el.select('.temperature .max')[0].text
-                        min_text = el.select('.weatherIco')[0]['title']
-                        day_pars = el.select('.day-link')[0].text
-                        month_pars = el.select('.date')[0].text
-                        day_name = el.select('.month')[0].text
-                        zaraz = el.select('.imgBlock .today-temp')[0].text
-                        dosch_rano = el.select('tr .p4')[7].text
-                        dosch_den = el.select('tr .p6')[7].text
-                        dosch_vechir = el.select('tr .p8')[7].text
-                        dosch_nich = el.select('tr .p2')[7].text
-                        dosch_rano = dosch_rano.replace('-', '0')
-                        dosch_den = dosch_den.replace('-', '0')
-                        dosch_vechir = dosch_vechir.replace('-', '0')
-                        dosch_nich = dosch_nich.replace('-', '0')
-                        temperatura_rano = el.select('.temperature .p4')[0].text
-                        temperatura_den = el.select('.temperature .p6')[0].text
-                        temperatura_vechir = el.select('.temperature .p8')[0].text
-                        temperatura_nich = el.select('.temperature .p2')[0].text
-                        mini_weather_rano = el.select('.img .p4 .weatherIco')[0]['title']
-                        mini_weather_den = el.select('.img .p6 .weatherIco')[0]['title']
-                        mini_weather_vechir = el.select('.img .p8 .weatherIco')[0]['title']
-                        mini_weather_nich = el.select('.img .p2 .weatherIco')[0]['title']
-                        witer_rano = el.select('.gray .p4')[2].text
-                        witer_den = el.select('.gray .p6')[2].text
-                        witer_vechir = el.select('.gray .p8')[2].text
-                        witer_nich = el.select('.gray .p2')[2].text
-                        vologist_rano = el.select('tr .p4')[5].text
-                        vologist_den = el.select('tr .p6')[5].text
-                        vologist_vechir = el.select('tr .p8')[5].text
-                        vologist_nich = el.select('tr .p2')[5].text
-                        full_description = el.select('.wDescription .description')[0].text
+            if query.data == 'Detail_weather_four':
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(hours=3,days=4)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[4].text
+                    t_max = el.select('.temperature .max')[4].text
+                    min_text = el.select('.weatherIco')[4]['title']
+                    day_pars = el.select('.day-link')[4].text
+                    month_pars = el.select('.date')[4].text
+                    day_name = el.select('.month')[4].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    dosch_nich = el.select('tr .p1')[7].text
+                    temperatura_rano = el.select('.temperature .p2')[0].text
+                    temperatura_den = el.select('.temperature .p3')[0].text
+                    temperatura_vechir = el.select('.temperature .p4')[0].text
+                    temperatura_nich = el.select('.temperature .p1')[0].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
+                    witer_rano = el.select('.gray .p2')[2].text
+                    witer_den = el.select('.gray .p3')[2].text
+                    witer_vechir = el.select('.gray .p4')[2].text
+                    witer_nich = el.select('.gray .p1')[2].text
+                    vologist_rano = el.select('tr .p2')[5].text
+                    vologist_den = el.select('tr .p3')[5].text
+                    vologist_vechir = el.select('tr .p4')[5].text
+                    vologist_nich = el.select('tr .p1')[5].text
+                    full_description = el.select('.wDescription .description')[0].text
+
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+
                 
-                    await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+            if query.data == 'Short_weather_five':
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(hours=3,days=5)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[5].text
+                    t_max = el.select('.temperature .max')[5].text
+                    min_text = el.select('.weatherIco')[5]['title']
+                    day_pars = el.select('.day-link')[5].text
+                    month_pars = el.select('.date')[5].text
+                    day_name = el.select('.month')[5].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    dosch_nich = el.select('tr .p1')[7].text
+                    temperatura_rano = el.select('.temperature .p2')[0].text
+                    temperatura_den = el.select('.temperature .p3')[0].text
+                    temperatura_vechir = el.select('.temperature .p4')[0].text
+                    temperatura_nich = el.select('.temperature .p1')[0].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
+                    
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+
+            if query.data == 'Detail_weather_five':
+                today = datetime.date.today()
+                zavtra = today + datetime.timedelta(hours=3,days=5)
+                dt_zavtra = zavtra.strftime('%Y-%m-%d')
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0] + '/' + dt_zavtra
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[5].text
+                    t_max = el.select('.temperature .max')[5].text
+                    min_text = el.select('.weatherIco')[5]['title']
+                    day_pars = el.select('.day-link')[5].text
+                    month_pars = el.select('.date')[5].text
+                    day_name = el.select('.month')[5].text
+                    dosch_rano = el.select('tr .p2')[7].text
+                    dosch_den = el.select('tr .p3')[7].text
+                    dosch_vechir = el.select('tr .p4')[7].text
+                    dosch_nich = el.select('tr .p1')[7].text
+                    temperatura_rano = el.select('.temperature .p2')[0].text
+                    temperatura_den = el.select('.temperature .p3')[0].text
+                    temperatura_vechir = el.select('.temperature .p4')[0].text
+                    temperatura_nich = el.select('.temperature .p1')[0].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    mini_weather_rano = el.select('.img .p2 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p3 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p1 .weatherIco')[0]['title']
+                    witer_rano = el.select('.gray .p2')[2].text
+                    witer_den = el.select('.gray .p3')[2].text
+                    witer_vechir = el.select('.gray .p4')[2].text
+                    witer_nich = el.select('.gray .p1')[2].text
+                    vologist_rano = el.select('tr .p2')[5].text
+                    vologist_den = el.select('tr .p3')[5].text
+                    vologist_vechir = el.select('tr .p4')[5].text
+                    vologist_nich = el.select('tr .p1')[5].text
+                    full_description = el.select('.wDescription .description')[0].text
+                    
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+
+            if query.data == 'Short_weather_today':
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0]
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[0].text
+                    t_max = el.select('.temperature .max')[0].text
+                    min_text = el.select('.weatherIco')[0]['title']
+                    day_pars = el.select('.day-link')[0].text
+                    month_pars = el.select('.date')[0].text
+                    day_name = el.select('.month')[0].text
+                    zaraz = el.select('.imgBlock .today-temp')[0].text
+                    dosch_rano = el.select('tr .p4')[7].text
+                    dosch_den = el.select('tr .p6')[7].text
+                    dosch_vechir = el.select('tr .p8')[7].text
+                    dosch_nich = el.select('tr .p2')[7].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    temperatura_rano = el.select('.temperature .p4')[0].text
+                    temperatura_den = el.select('.temperature .p6')[0].text
+                    temperatura_vechir = el.select('.temperature .p8')[0].text
+                    temperatura_nich = el.select('.temperature .p2')[0].text
+                    mini_weather_rano = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p6 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p8 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p2 .weatherIco')[0]['title']
                 
-                if query.data == 'Nazad_weather':
-                    await query.message.edit_text(f'👤Користувач [{db.check_nick(message.from_user.id)[0]}](tg://user?id={message.from_user.id})\n👌Виберіть день за який хочете получити інформацію про погоду:', reply_markup=inl.mainMenu, parse_mode='Markdown')
-    
-    except UnboundLocalError:
-        await message.reply('Такого міста не існує')
-    except KeyError:
-        await bot.send_message(5112839866,'Треба добавити якись день')
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+
+            if query.data == 'Detail_weather_today':
+                url = 'https://ua.sinoptik.ua/погода-' + save_pogoda[0]
+                r = requests.get(url)
+                html = BS(r.content, 'lxml')
+                for el in html.select('#content'):
+                    t_min = el.select('.temperature .min')[0].text
+                    t_max = el.select('.temperature .max')[0].text
+                    min_text = el.select('.weatherIco')[0]['title']
+                    day_pars = el.select('.day-link')[0].text
+                    month_pars = el.select('.date')[0].text
+                    day_name = el.select('.month')[0].text
+                    zaraz = el.select('.imgBlock .today-temp')[0].text
+                    dosch_rano = el.select('tr .p4')[7].text
+                    dosch_den = el.select('tr .p6')[7].text
+                    dosch_vechir = el.select('tr .p8')[7].text
+                    dosch_nich = el.select('tr .p2')[7].text
+                    dosch_rano = dosch_rano.replace('-', '0')
+                    dosch_den = dosch_den.replace('-', '0')
+                    dosch_vechir = dosch_vechir.replace('-', '0')
+                    dosch_nich = dosch_nich.replace('-', '0')
+                    temperatura_rano = el.select('.temperature .p4')[0].text
+                    temperatura_den = el.select('.temperature .p6')[0].text
+                    temperatura_vechir = el.select('.temperature .p8')[0].text
+                    temperatura_nich = el.select('.temperature .p2')[0].text
+                    mini_weather_rano = el.select('.img .p4 .weatherIco')[0]['title']
+                    mini_weather_den = el.select('.img .p6 .weatherIco')[0]['title']
+                    mini_weather_vechir = el.select('.img .p8 .weatherIco')[0]['title']
+                    mini_weather_nich = el.select('.img .p2 .weatherIco')[0]['title']
+                    witer_rano = el.select('.gray .p4')[2].text
+                    witer_den = el.select('.gray .p6')[2].text
+                    witer_vechir = el.select('.gray .p8')[2].text
+                    witer_nich = el.select('.gray .p2')[2].text
+                    vologist_rano = el.select('tr .p4')[5].text
+                    vologist_den = el.select('tr .p6')[5].text
+                    vologist_vechir = el.select('tr .p8')[5].text
+                    vologist_nich = el.select('tr .p2')[5].text
+                    full_description = el.select('.wDescription .description')[0].text
+                
+                await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n⛱️Зараз: {zaraz}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
+                
+            if query.data == 'Nazad_weather':
+                await query.message.edit_text(f'👤Користувач [{db.check_nick(message.from_user.id)[0]}](tg://user?id={message.from_user.id})\n👌Виберіть день за який хочете получити інформацію про погоду:', reply_markup=inl.mainMenu, parse_mode='Markdown')   
     
     try:
         if '!мут ' in message.text in message.text:
@@ -734,7 +737,6 @@ async def rp_commands(message: types.Message):
     
     try:
         if message.text == 'Рестарт' and admbd.check_adm(message.from_user.id)[0] == 5:
-            await bot.send_message(5112839866,'Хтось перезапустив бота')
             os.execv(sys.executable, [sys.executable] + sys.argv)
         if 'Арнольд інфа ' in message.text or 'арнольд інфа ' in message.text:
             await message.reply(f'[🤔](tg://user?id={message.from_user.id}) я думаю, що ймовірність {random.randint(0,100)}%', parse_mode='Markdown')  
@@ -797,7 +799,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 5:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n├ !Мут\n├ Получити БД\n╰ Рестарт\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n├ !Мут\n├ !Бан\n├ Получити БД\n╰ Рестарт\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -814,7 +816,16 @@ async def rp_commands(message: types.Message):
             user_id = message.from_user.id
             await message.reply(f'''
 [📒](tg://user?id={user_id})На данний момент в мене є такі команди
-Щоб побачити які команди ви вмієте використовувати напишіть `Хто я` і нажміть <що я вмію>
+
+👌Основні:
+1) +ник | +нік - міняє нік в самому боті
+2) Дата | получаєш дату за теперішній час
+3) бан | кік | мут - тільки адміни можуть юзати
+4) +адмінка (рівень адмінки, з 1-5) [відповівши на користувача] | дає адмінку користувачу якому відповіли, приклад: +адмінка 3
+5) Погода [місто] | приклад: Погода львів
+6) +опис 
+7) Арнольд інфа | приклад: Арнольд інфа мені йти їсти?
+8) хто я | получиш інформацыю про себе (статус адмінки в боті, нік в боті, які команди ти вмієш використовувати)
 
 😊РП:
 1) `дати підсрачника`
@@ -970,12 +981,9 @@ async def rp_commands(message: types.Message):
             db.nick_user(firstname, user_id)
     except Exception:
         await bot.send_message(5112839866,'Помилка')
-
-            
-        
-    
-        
+         
 if __name__ == '__main__':
     #запуск бота
+    print('Запустився')
     executor.start_polling(dp, skip_updates=True)
 #\nВітер | {witer_rano} м/с\n
