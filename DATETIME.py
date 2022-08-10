@@ -1,22 +1,24 @@
-import time
-from translate import Translator
+import datetime
 
 class date_time():
     '''дата для БД'''
-    def time(self, user_data):
+    def time(self):
         '''Підключення до часу'''
-        self.todaytime = time.strftime("%m-%d-%Y %H:%M:%S", user_data)
+        self.todaytime = datetime.datetime.today().strftime("%m-%d-%Y %H:%M:%S")
         return (self.todaytime)
     
-    def transweek(self, week):
-        '''Переклад тексту для РП команди ДАТА WEEK'''
-        tran = Translator(from_lang='english', to_lang='uk')
-        translate_week = tran.translate(week)
-        return (translate_week)
+    def time_heroku(self):
+        '''Підключення до часу HEROKY'''
+        self.todaytime = datetime.datetime.today() + datetime.timedelta(hours=3)
+        self.todaytime = self.todaytime.strftime("%m-%d-%Y %H:%M:%S")
+        return (self.todaytime)
     
-    def transmonth(self, month):
-        '''Переклад тексту для РП команди ДАТА MONTH'''
-        tran = Translator(from_lang='english', to_lang='uk')
-        translate_month = tran.translate(month)
-        return (translate_month)
-
+translate_days = {
+    'Monday':'Понеділок',
+    'Tuesday':'Вівторок',
+    'Wednesday':'Середа',
+    'Thursday':'Четвер',
+    'Friday':'Пятниця',
+    'Saturday':'Субота',
+    'Sunday':'Неділя'
+}
