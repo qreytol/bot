@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from DATETIME import date_time
+from DATETIME import date_time,translate_days
 import datetime
 
 today = datetime.date.today()
@@ -25,11 +25,11 @@ StartMenu = InlineKeyboardMarkup()
 
 
 #значення кнопок з днями для погоди старт
-oneBTN = InlineKeyboardButton(text=f'{dtimee.transweek(week_one)}', callback_data='one_weather')
-threeBTN = InlineKeyboardButton(text=f'{dtimee.transweek(week_two)}', callback_data='two_weather')
-thourBTN = InlineKeyboardButton(text=f'{dtimee.transweek(week_three)}', callback_data='three_weather')
-fiveBTN = InlineKeyboardButton(text=f'{dtimee.transweek(week_four)}', callback_data='four_weather')
-sixBTN = InlineKeyboardButton(text=f'{dtimee.transweek(week_five)}', callback_data='five_weather')
+oneBTN = InlineKeyboardButton(text=f'{translate_days[week_one]}', callback_data='one_weather')
+threeBTN = InlineKeyboardButton(text=f'{translate_days[week_two]}', callback_data='two_weather')
+thourBTN = InlineKeyboardButton(text=f'{translate_days[week_three]}', callback_data='three_weather')
+fiveBTN = InlineKeyboardButton(text=f'{translate_days[week_four]}', callback_data='four_weather')
+sixBTN = InlineKeyboardButton(text=f'{translate_days[week_five]}', callback_data='five_weather')
 twoBTN = InlineKeyboardButton(text='Сьогодні', callback_data='today_weather')
 
 
