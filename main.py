@@ -751,7 +751,12 @@ async def rp_commands(message: types.Message):
     
     try:
         if message.text == 'Повітряна тривога':
-            driver = webdriver.Edge(EdgeChromiumDriverManager().install())
+            chrome_options = webdriver.ChromeOptions()
+            chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument("--no-sandbox")
+            driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
             driver.get("https://alerts.in.ua/lite")  # Открываем страницу
             time.sleep(5)  # Время на прогрузку страницы
             html = BS(driver.page_source, 'lxml')
@@ -763,7 +768,7 @@ async def rp_commands(message: types.Message):
                     name_oblast = el.select('path')[i]['data-oblast']
                     full_oblast_infa.append(str(f'{name_oblast} | {full_oblast_infa_check[RedOrNet]}'))
                     
-            await message.reply(f'🟩-Нема тривоги\n🟥-Є тривога\n{full_oblast_infa[0]}\n{full_oblast_infa[1]}\n{full_oblast_infa[2]}\n{full_oblast_infa[3]}\n{full_oblast_infa[4]}\n{full_oblast_infa[5]}\n{full_oblast_infa[6]}\n{full_oblast_infa[7]}\n{full_oblast_infa[8]}\n{full_oblast_infa[9]}\n{full_oblast_infa[10]}\n{full_oblast_infa[11]}\n{full_oblast_infa[12]}\n{full_oblast_infa[13]}\n{full_oblast_infa[14]}\n{full_oblast_infa[15]}\n{full_oblast_infa[16]}\n{full_oblast_infa[17]}\n{full_oblast_infa[18]}\n{full_oblast_infa[19]}\n{full_oblast_infa[20]}\n{full_oblast_infa[21]}\n{full_oblast_infa[22]}\n{full_oblast_infa[23]}')
+            await message.reply(f'🟩-Нема тривоги\n🟥-Є тривога\n{full_oblast_infa[0]}\n{full_oblast_infa[1]}\n{full_oblast_infa[2]}\n{full_oblast_infa[3]}\n{full_oblast_infa[4]}\n{full_oblast_infa[5]}\n{full_oblast_infa[6]}\n{full_oblast_infa[7]}\n{full_oblast_infa[8]}\n{full_oblast_infa[9]}\n{full_oblast_infa[10]}\n{full_oblast_infa[11]}\n{full_oblast_infa[12]}\n{full_oblast_infa[13]}\n{full_oblast_infa[14]}\n{full_oblast_infa[15]}\n{full_oblast_infa[16]}\n{full_oblast_infa[17]}\n{full_oblast_infa[18]}\n{full_oblast_infa[19]}\n{full_oblast_infa[20]}\n{full_oblast_infa[21]}\n{full_oblast_infa[22]}\n{full_oblast_infa[23]}')      
         if message.text == 'LINK':
             link = await get_start_link(message.from_user.id)
             await message.reply(link)
@@ -1005,5 +1010,5 @@ async def rp_commands(message: types.Message):
 if __name__ == '__main__':
     #запуск бота
     print('Запустився')
-    executor.start_polling(dp)
+    executor.start_polling(dp, skip_updates=True)
 #\nВітер | {witer_rano} м/с\n
