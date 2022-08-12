@@ -749,7 +749,7 @@ async def rp_commands(message: types.Message):
     
     try:
         if message.text == 'Повітряна тривога':
-            driver = webdriver.Edge('msedgedriver.exe')
+            driver = webdriver.Edge(executable_path='msedgedriver.exe')
             driver.get("https://alerts.in.ua/lite")  # Открываем страницу
             time.sleep(5)  # Время на прогрузку страницы
             html = BS(driver.page_source, 'lxml')
