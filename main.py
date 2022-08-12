@@ -998,8 +998,6 @@ async def rp_commands(message: types.Message):
         
         if db.check_nick(user_id) == None:
             db.nick_user(firstname, user_id)
-    except Exception:
-        await bot.send_message(5112839866,'Помилка')
 
 
 if __name__ == '__main__':
