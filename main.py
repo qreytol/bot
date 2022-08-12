@@ -4,13 +4,11 @@ from cgitb import text
 from email import message, utils
 from email.policy import default
 from itertools import count
-import logging
 from tabnanny import check
 from types import NoneType
 from typing import final
 from xml.dom import ValidationErr
 from aiogram import Bot, Dispatcher, executor, types
-import time
 import datetime
 import aiogram
 from click import command
@@ -19,7 +17,6 @@ from DBusers import SQLitedb
 from DATETIME import date_time,translate_days
 import random
 from ADMINS import ADMcommand
-import config
 import requests
 from bs4 import BeautifulSoup as BS
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -27,9 +24,13 @@ import basic_keyboard as inl
 import cnfg
 import os,sys
 from aiogram.utils.deep_linking import get_start_link
+from selenium import webdriver 
+import time
 
 from aiohttp import ContentTypeError
 
+full_oblast_infa_check = {'#ea4335':'🟥',
+      '#ffffff':'🟩'}
 
 #підключення до дати
 dtime = date_time()
@@ -145,13 +146,12 @@ async def rp_commands(message: types.Message):
                 await query.message.edit_text(f'Ви вибрали: {translate_days[inl.week_five]}\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortFive)
 
             elif query.data == 'today_weather':
-                today_weather_translate = datetime.date.today() + datetime.timedelta(hours=3)
-                today_weather_translate = today_weather_translate.strftime('%A')
+                today_weather_translate = datetime.date.today().strftime('%A')
                 await query.message.edit_text(f'Ви вибрали: Сьогодні ({translate_days[today_weather_translate]})\n😊Виберіть тип інформації:\n1)📕Більше - більше інформації\n2)📝Менше - менше інформації', reply_markup=inl.MenuDetailOrShortToday)
 
             if query.data == 'Short_weather_one':
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=1)
+                zavtra = today + datetime.timedelta(days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -184,7 +184,7 @@ async def rp_commands(message: types.Message):
                 
             if query.data == 'Detail_weather_one':
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=1)
+                zavtra = today + datetime.timedelta(days=1)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -227,7 +227,7 @@ async def rp_commands(message: types.Message):
 
             if query.data == 'Short_weather_two':
                 today = datetime.date.today()
-                pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
+                pisla_zavtra = today + datetime.timedelta(days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -261,7 +261,7 @@ async def rp_commands(message: types.Message):
                     await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
                 else:
                     today = datetime.date.today()
-                    pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
+                    pisla_zavtra = today + datetime.timedelta(days=2)
                     dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                     url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                     r = requests.get(url)
@@ -294,7 +294,7 @@ async def rp_commands(message: types.Message):
                 
             if query.data == 'Detail_weather_two':
                 today = datetime.date.today()
-                pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
+                pisla_zavtra = today + datetime.timedelta(days=2)
                 dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -337,7 +337,7 @@ async def rp_commands(message: types.Message):
                     await query.message.edit_text(f'📅Дата: {day_pars} | {month_pars} | {day_name}\n📝Маленький опис: {min_text}\n🌡️Температура за весь день: {t_min} | {t_max}\n*☀️Ранок 9:00*:\nБуде: {mini_weather_rano} {pogoda_emoji[mini_weather_rano]}\nТемпература зранку: {temperatura_rano}\nЙмовірність опадів | {dosch_rano}%\nВітер | {witer_rano} м/с\nВологість: {vologist_rano}%\n*🌤️День 15:00*:\nБуде: {mini_weather_den} {pogoda_emoji[mini_weather_den]}\nТемпература вдень: {temperatura_den}\nЙмовірність опадів | {dosch_den}%\nВітер | {witer_den} м/с\nВологість: {vologist_den}%\n*⭐Вечір 21:00*:\nБуде: {mini_weather_vechir} {pogoda_emoji[mini_weather_vechir]}\nТемпература ввечері: {temperatura_vechir}\nЙмовірність опадів | {dosch_vechir}%\nВітер | {witer_vechir} м/с\nВологість: {vologist_vechir}%\n*🌙Ніч 3:00*:\nБуде: {mini_weather_nich} {pogoda_emoji[mini_weather_nich]}\nТемпература вночі: {temperatura_nich}\nЙмовірність опадів | {dosch_nich}%\nВітер | {witer_nich} м/с\nВологість: {vologist_nich}%\n⭐Повний опис:\n{full_description[2:]}', reply_markup=inl.mainMenuNazad, parse_mode='Markdown')
                 else:
                     today = datetime.date.today()
-                    pisla_zavtra = today + datetime.timedelta(hours=3,days=2)
+                    pisla_zavtra = today + datetime.timedelta(days=2)
                     dt_zavtra = pisla_zavtra.strftime('%Y-%m-%d')
                     url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                     r = requests.get(url)
@@ -379,7 +379,7 @@ async def rp_commands(message: types.Message):
                 
             if query.data == 'Short_weather_three':
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=3)
+                zavtra = today + datetime.timedelta(days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -412,7 +412,7 @@ async def rp_commands(message: types.Message):
 
             if query.data == 'Detail_weather_three':
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=3)
+                zavtra = today + datetime.timedelta(days=3)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -454,7 +454,7 @@ async def rp_commands(message: types.Message):
                     
             if query.data == 'Short_weather_four':
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=4)
+                zavtra = today + datetime.timedelta(days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -487,7 +487,7 @@ async def rp_commands(message: types.Message):
 
             if query.data == 'Detail_weather_four':
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=4)
+                zavtra = today + datetime.timedelta(days=4)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -530,7 +530,7 @@ async def rp_commands(message: types.Message):
                 
             if query.data == 'Short_weather_five':
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=5)
+                zavtra = today + datetime.timedelta(days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -563,7 +563,7 @@ async def rp_commands(message: types.Message):
 
             if query.data == 'Detail_weather_five':
                 today = datetime.date.today()
-                zavtra = today + datetime.timedelta(hours=3,days=5)
+                zavtra = today + datetime.timedelta(days=5)
                 dt_zavtra = zavtra.strftime('%Y-%m-%d')
                 url = 'https://ua.sinoptik.ua/погода-' + city_ok + '/' + dt_zavtra
                 r = requests.get(url)
@@ -721,6 +721,7 @@ async def rp_commands(message: types.Message):
             else:
                 await message.reply(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n➖Не мав мута')
         
+        
         if message.text == '!бан' or message.text == '! бан' or message.text == '!Бан' or message.text == '! Бан':
             user_id = message.from_user.id
             if  admbd.check_adm(user_id)[0] >= 3:
@@ -740,7 +741,6 @@ async def rp_commands(message: types.Message):
             d = message.reply_to_message.from_user.id
             await bot.unban_chat_member(message.chat.id, d, True)
             await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n✖️Тепер може зайти!', parse_mode='Markdown')
-
         
     except IndexError:
         await message.reply('Ти неправильно ввів\nприклад: мут 1 година')
@@ -748,6 +748,20 @@ async def rp_commands(message: types.Message):
         await message.reply('треба відповісти на юзера!')
     
     try:
+        if message.text == 'Повітряна тривога':
+            driver = webdriver.Edge('msedgedriver.exe')
+            driver.get("https://alerts.in.ua/lite")  # Открываем страницу
+            time.sleep(5)  # Время на прогрузку страницы
+            html = BS(driver.page_source, 'lxml')
+
+            for el in html.select('#oblasts'):
+                full_oblast_infa = []
+                for i in range(1,25):
+                    RedOrNet = el.select('path')[i]['fill']
+                    name_oblast = el.select('path')[i]['data-oblast']
+                    full_oblast_infa.append(str(f'{name_oblast} | {full_oblast_infa_check[RedOrNet]}'))
+                    
+            await message.reply(f'🟩-Нема тривоги\n🟥-Є тривога\n{full_oblast_infa[0]}\n{full_oblast_infa[1]}\n{full_oblast_infa[2]}\n{full_oblast_infa[3]}\n{full_oblast_infa[4]}\n{full_oblast_infa[5]}\n{full_oblast_infa[6]}\n{full_oblast_infa[7]}\n{full_oblast_infa[8]}\n{full_oblast_infa[9]}\n{full_oblast_infa[10]}\n{full_oblast_infa[11]}\n{full_oblast_infa[12]}\n{full_oblast_infa[13]}\n{full_oblast_infa[14]}\n{full_oblast_infa[15]}\n{full_oblast_infa[16]}\n{full_oblast_infa[17]}\n{full_oblast_infa[18]}\n{full_oblast_infa[19]}\n{full_oblast_infa[20]}\n{full_oblast_infa[21]}\n{full_oblast_infa[22]}\n{full_oblast_infa[23]}')
         if message.text == 'LINK':
             link = await get_start_link(message.from_user.id)
             await message.reply(link)
@@ -991,5 +1005,5 @@ async def rp_commands(message: types.Message):
 if __name__ == '__main__':
     #запуск бота
     print('Запустився')
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(dp)
 #\nВітер | {witer_rano} м/с\n
