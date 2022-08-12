@@ -26,6 +26,8 @@ import os,sys
 from aiogram.utils.deep_linking import get_start_link
 from selenium import webdriver 
 import time
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
+
 
 from aiohttp import ContentTypeError
 
@@ -749,7 +751,7 @@ async def rp_commands(message: types.Message):
     
     try:
         if message.text == 'Повітряна тривога':
-            driver = webdriver.Edge(executable_path='msedgedriver.exe')
+            driver = webdriver.Edge(EdgeChromiumDriverManager().install())
             driver.get("https://alerts.in.ua/lite")  # Открываем страницу
             time.sleep(5)  # Время на прогрузку страницы
             html = BS(driver.page_source, 'lxml')
