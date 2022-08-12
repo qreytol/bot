@@ -785,7 +785,7 @@ async def rp_commands(message: types.Message):
             if check_adm_status == 0:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n╰ Арнольд інфа \nДля більш детальної інформації напишіть `Допомога`' , parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n╰ Повітряна тривога\nДля більш детальної інформації напишіть `Допомога`' , parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -795,7 +795,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 1:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n╰ Арнольд інфа \nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n╰ Повітряна тривога\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -805,7 +805,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 2:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n╰ Арнольд інфа\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n╰ Повітряна тривога\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -815,7 +815,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 3:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n╰ !Мут\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n├ !Мут\n╰ Повітряна тривога\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -825,7 +825,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 4:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('╰⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа \n├ !Мут\n╰ !Бан\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
+                    await query.message.answer('╰⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа \n├ !Мут\n├ !Бан\n╰ Повітряна тривога\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
@@ -835,7 +835,7 @@ async def rp_commands(message: types.Message):
             elif check_adm_status == 5:
                 @dp.callback_query_handler(text='getCommands')
                 async def weather_right(query: types.CallbackQuery):
-                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n├ !Мут\n├ !Бан\n├ Получити БД\n╰ Рестарт\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
+                    await query.message.answer('⭐Ви вмієте:\n├ +нік\n├ Дата\n├ Погода\n├ +опис\n├ Арнольд інфа\n├ !Мут\n├ !Бан\n├ Получити БД\n├ Рестарт\n╰ Повітряна тривога\nДля більш детальної інформації напишіть `Допомога`', parse_mode='Markdown')
                     
                 @dp.callback_query_handler(text='getOpis')
                 async def weather_right(query: types.CallbackQuery):
