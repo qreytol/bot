@@ -751,7 +751,7 @@ async def rp_commands(message: types.Message):
         await message.reply('треба відповісти на юзера!')
     
     try:
-        if message.text == 'Повітряна тривога':
+        if message.text.lower() == 'повітряна тривога':
             chrome_options = webdriver.ChromeOptions()
             chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
             chrome_options.add_argument("--headless")
