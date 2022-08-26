@@ -762,15 +762,12 @@ async def rp_commands(message: types.Message):
             time.sleep(3.5)  # Время на прогрузку страницы
             html = BS(driver.page_source, 'lxml')
 
-            number_of_air_rade = 0
             full_information_of_ukraine_raide = []
             for el in html.select('.amo-map-alarms-list-item'):
                 air_raide_name = el.select('.amo-map-alarms-list-item-data .amo-map-alarms-list-item-name')[0].text
-                time_air_raide = el.select('span')
                 air_raide_advertisement = el.select('.amo-map-alarms-list-item-info-announced span')
                 if time_air_raide != []:
-                    number_of_air_rade+=1
-                    full_information_of_ukraine_raide.append(f'{number_of_air_rade}. {air_raide_name} | Повітряна тривога триває {time_air_raide[0].text} | Оголошена в {air_raide_advertisement[0].text}')
+                    full_information_of_ukraine_raide.append(f'📢{air_raide_name}\n    Оголошена в {air_raide_advertisement[0].text}\n')
             await message.reply('\n'.join(full_information_of_ukraine_raide))
         if message.text == 'LINK':
             link = await get_start_link(message.from_user.id)
