@@ -758,19 +758,20 @@ async def rp_commands(message: types.Message):
             chrome_options.add_argument("--disable-dev-shm-usage")
             chrome_options.add_argument("--no-sandbox")
             driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
-            driver.get("https://alerts.in.ua/lite")  # Открываем страницу
-            time.sleep(5)  # Время на прогрузку страницы
+            driver.get("https://alarmmap.online/")  # Открываем страницу
+            time.sleep(3.5)  # Время на прогрузку страницы
             html = BS(driver.page_source, 'lxml')
 
-            for el in html.select('#oblasts'):
-                full_oblast_infa = []
-                for i in range(1,25):
-                    RedOrNet = el.select('path')[i]['fill']
-                    name_oblast = el.select('path')[i]['data-oblast']
-                    full_oblast_infa.append(str(f'{name_oblast} | {full_oblast_infa_check[RedOrNet]}'))
-            
-            await message.reply(f'🟩-Нема тривоги\n🟥-Є тривога\n🟧 - Тривога тільки в одному місті\районі\n{full_oblast_infa[0]}\n{full_oblast_infa[1]}\n{full_oblast_infa[2]}\n{full_oblast_infa[3]}\n{full_oblast_infa[4]}\n{full_oblast_infa[5]}\n{full_oblast_infa[6]}\n{full_oblast_infa[7]}\n{full_oblast_infa[8]}\n{full_oblast_infa[9]}\n{full_oblast_infa[10]}\n{full_oblast_infa[11]}\n{full_oblast_infa[12]}\n{full_oblast_infa[13]}\n{full_oblast_infa[14]}\n{full_oblast_infa[15]}\n{full_oblast_infa[16]}\n{full_oblast_infa[17]}\n{full_oblast_infa[18]}\n{full_oblast_infa[19]}\n{full_oblast_infa[20]}\n{full_oblast_infa[21]}\n{full_oblast_infa[22]}\n{full_oblast_infa[23]}')    
-
+            number_of_air_rade = 0
+            full_information_of_ukraine_raide = []
+            for el in html.select('.amo-map-alarms-list-item'):
+                air_raide_name = el.select('.amo-map-alarms-list-item-data .amo-map-alarms-list-item-name')[0].text
+                time_air_raide = el.select('span')
+                air_raide_advertisement = el.select('.amo-map-alarms-list-item-info-announced span')
+                if time_air_raide != []:
+                    number_of_air_rade+=1
+                    full_information_of_ukraine_raide.append(f'{number_of_air_rade}. {air_raide_name} | Повітряна тривога триває {time_air_raide[0].text} | Оголошена в {air_raide_advertisement[0].text}')
+            await message.reply('\n'.join(full_information_of_ukraine_raide))
         if message.text == 'LINK':
             link = await get_start_link(message.from_user.id)
             await message.reply(link)
@@ -959,43 +960,82 @@ async def rp_commands(message: types.Message):
 
             if message.text == 'зїсти' or message.text == 'Зїсти':
                 await bot.send_message(message.chat.id, f"😅😋| [{nick_first_user}](tg://user?id={b}) з'їв [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
-                  
+                        
+            if 'зїсти\n' in message.text or 'Зїсти\n' in message.text:
+                await bot.send_message(message.chat.id, f"😅😋| [{nick_first_user}](tg://user?id={b}) з'їв [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[6:]}", parse_mode='Markdown')
+            
             if message.text == "погладити" or message.text == 'Погладити':
                 await bot.send_message(message.chat.id, f"🥺🤭| [{nick_first_user}](tg://user?id={b}) погладив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
+                        
+            if 'погладити\n' in message.text or 'Погладити\n' in message.text:
+                await bot.send_message(message.chat.id, f"🥺🤭| [{nick_first_user}](tg://user?id={b}) погладив [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[10:]}", parse_mode='Markdown')
             
             if message.text == "вбити" or message.text == 'Вбити':
                 await bot.send_message(message.chat.id, f"😡🔪| [{nick_first_user}](tg://user?id={b}) вбив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                         
+            if 'вбити\n' in message.text or 'Вбити\n' in message.text:
+                await bot.send_message(message.chat.id, f"😡🔪| [{nick_first_user}](tg://user?id={b}) вбив [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[6:]}", parse_mode='Markdown')
+                   
             if message.text == "вдарити" or message.text == 'Вдарити':
                 await bot.send_message(message.chat.id, f"😡👎🏿| [{nick_first_user}](tg://user?id={b}) вдарив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                         
+            if 'вдарити\n' in message.text or 'Вдарити\n' in message.text:
+                await bot.send_message(message.chat.id, f"😡👎🏿| [{nick_first_user}](tg://user?id={b}) вдарив [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[8:]}", parse_mode='Markdown')
+                      
             if message.text == "поцілувати" or message.text == 'Поцілувати':
                 await bot.send_message(message.chat.id, f"😏😘| [{nick_first_user}](tg://user?id={b}) поцілував [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                         
-            if message.text == "кусь" or message.text == 'Кусь':
+            if 'поцілувати\n' in message.text or 'Поцілувати\n' in message.text:
+                await bot.send_message(message.chat.id, f"😏😘| [{nick_first_user}](tg://user?id={b}) поцілував [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[11:]}", parse_mode='Markdown')
+            
+            if message.text == 'кусь' or message.text == 'Кусь':
                 await bot.send_message(message.chat.id, f"😋| [{nick_first_user}](tg://user?id={b}) кусьнув [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
+                        
+            if 'кусь\n' in message.text or 'Кусь\n' in message.text:
+                await bot.send_message(message.chat.id, f"😋| [{nick_first_user}](tg://user?id={b}) кусьнув [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[5:]}", parse_mode='Markdown')
             
             if message.text == "спалити" or message.text == 'Спалити':
                 await bot.send_message(message.chat.id, f"🤬🔥| [{nick_first_user}](tg://user?id={b}) спалив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
+                        
+            if 'спалити\n' in message.text or 'Спалити\n' in message.text:
+                await bot.send_message(message.chat.id, f"🤬🔥| [{nick_first_user}](tg://user?id={b}) спалив [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[8:]}", parse_mode='Markdown')
             
             if message.text == "сильно вдарити" or message.text == 'Сильно вдарити':
                 await bot.send_message(message.chat.id, f"😈👊| [{nick_first_user}](tg://user?id={b}) дуже сильно вдарив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')    
+                        
+            if 'сильно вдарити\n' in message.text or 'Сильно вдарити\n' in message.text:
+                await bot.send_message(message.chat.id, f"😈👊| [{nick_first_user}](tg://user?id={b}) дуже сильно вдарив [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[15:]}", parse_mode='Markdown')
             
             if message.text == "кохатися" or message.text == 'Кохатися':
                 await bot.send_message(message.chat.id, f"🥵❤️| [{nick_first_user}](tg://user?id={b}) жостко кохається з [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
-        
+                        
+            if 'кохатися\n' in message.text or 'Кохатися\n' in message.text:
+                await bot.send_message(message.chat.id, f"🥵❤️| [{nick_first_user}](tg://user?id={b}) жостко кохається з [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[9:]}", parse_mode='Markdown')
+            
             if message.text == "цьом" or message.text == 'Цьом':
                 await bot.send_message(message.chat.id, f"💓🌸| [{nick_first_user}](tg://user?id={b}) поцьомав [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
-                
+                        
+            if 'цьом\n' in message.text or 'Цьом\n' in message.text:
+                await bot.send_message(message.chat.id, f"💓🌸| [{nick_first_user}](tg://user?id={b}) поцьомав [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[5:]}", parse_mode='Markdown')
+            
             if message.text == 'дати підсрачника' or message.text == 'Дати підсрачника':
                 await bot.send_message(message.chat.id, f"🦶☺️| [{nick_first_user}](tg://user?id={b}) дав підсрачника [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
+                        
+            if 'дати підсрачника\n' in message.text or 'Дати підсрачника\n' in message.text:
+                await bot.send_message(message.chat.id, f"🦶☺️| [{nick_first_user}](tg://user?id={b}) дав підсрачника [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[17:]}", parse_mode='Markdown')
             
             if message.text == 'отруїти' or message.text == 'Отруїти':
                 await bot.send_message(message.chat.id, f"🧪☠️| [{nick_first_user}](tg://user?id={b}) отруїв [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
+                        
+            if 'отруїти\n' in message.text or 'Отруїти\n' in message.text:
+                await bot.send_message(message.chat.id, f"🧪☠️| [{nick_first_user}](tg://user?id={b}) отруїв [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[8:]}", parse_mode='Markdown')
             
             if message.text == 'покормити' or message.text == 'Покормити':
                 await bot.send_message(message.chat.id, f"😋🍕| [{nick_first_user}](tg://user?id={b}) покормив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
-            
+                        
+            if 'покормити\n' in message.text or 'Покормити\n' in message.text:
+                await bot.send_message(message.chat.id, f"😋🍕| [{nick_first_user}](tg://user?id={b}) покормив [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[10:]}", parse_mode='Markdown')
+                        
     except TypeError:
         add_time = dtime.time_heroku()
         user_id = message.from_user.id
