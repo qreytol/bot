@@ -765,6 +765,7 @@ async def rp_commands(message: types.Message):
             full_information_of_ukraine_raide = []
             for el in html.select('.amo-map-alarms-list-item'):
                 air_raide_name = el.select('.amo-map-alarms-list-item-data .amo-map-alarms-list-item-name')[0].text
+                time_air_raide = el.select('span')
                 air_raide_advertisement = el.select('.amo-map-alarms-list-item-info-announced span')
                 if time_air_raide != []:
                     full_information_of_ukraine_raide.append(f'📢{air_raide_name}\n    Оголошена в {air_raide_advertisement[0].text}\n')
