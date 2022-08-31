@@ -772,8 +772,7 @@ async def rp_commands(message: types.Message):
                     timedelta = datetime.timedelta(hours=3)
                     b = (datetime.datetime.combine(datetime.date.today(), time1) + timedelta).time()
                     full_information_of_ukraine_raide.append(f'📢{air_raide_name}\n    Оголошена в {b}\n')
-            await message.reply('\n'.join(full_information_of_ukraine_raide))
-            await bot.send_message(5112839866, f'{message.from_user.first_name} подивився повітряну тривогу')            
+            await message.reply('\n'.join(full_information_of_ukraine_raide))    
         if message.text == 'LINK':
             link = await get_start_link(message.from_user.id)
             await message.reply(link)
