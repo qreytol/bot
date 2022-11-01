@@ -26,7 +26,6 @@ import os,sys
 from aiogram.utils.deep_linking import get_start_link
 from selenium import webdriver 
 import time
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
 
 from aiohttp import ContentTypeError
@@ -1037,7 +1036,29 @@ async def rp_commands(message: types.Message):
                         
             if 'покормити\n' in message.text or 'Покормити\n' in message.text:
                 await bot.send_message(message.chat.id, f"😋🍕| [{nick_first_user}](tg://user?id={b}) покормив [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[10:]}", parse_mode='Markdown')
+
+            if message.text == 'В буду' or message.text == 'в буду':
+                owner_adm = await bot.get_chat_member(message.chat.id, d)
+                if owner_adm.status == 'administrator' or owner_adm.status == 'creator':
+                    await message.reply('Він адмін')
+                elif message.reply_to_message.from_user.id == message.from_user.id:
+                    await message.reply('Не можна себе мутити!')
+                else:
+                    d = message.reply_to_message.from_user.id
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), 5)
+                    await bot.send_message(message.chat.id, f"🐶🤬| [{nick_first_user}](tg://user?id={b}) відправив в будку [{nick_two_user}](tg://user?id={d})\n😘На 5 хвилин", parse_mode='Markdown')
                         
+            if 'В буду\n' in message.text or 'в буду\n' in message.text:
+                owner_adm = await bot.get_chat_member(message.chat.id, d)
+                if owner_adm.status == 'administrator' or owner_adm.status == 'creator':
+                    await message.reply('Він адмін')
+                elif message.reply_to_message.from_user.id == message.from_user.id:
+                    await message.reply('Не можна себе мутити!')
+                else:
+                    d = message.reply_to_message.from_user.id
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), 5)
+                    await bot.send_message(message.chat.id, f"🐶🤬| [{nick_first_user}](tg://user?id={b}) відправив в будку [{nick_two_user}](tg://user?id={d})\n😘На 5 хвилин", parse_mode='Markdown')
+
     except TypeError:
         add_time = dtime.time_heroku()
         user_id = message.from_user.id
