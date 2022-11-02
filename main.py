@@ -1045,7 +1045,7 @@ async def rp_commands(message: types.Message):
                     await message.reply('Не можна себе мутити!')
                 else:
                     d = message.reply_to_message.from_user.id
-                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), 5)
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=3,minutes=5)
                     await bot.send_message(message.chat.id, f"🐶🤬| [{nick_first_user}](tg://user?id={b}) відправив в будку [{nick_two_user}](tg://user?id={d})\n😘На 5 хвилин", parse_mode='Markdown')
                         
             if 'В буду\n' in message.text or 'в буду\n' in message.text:
@@ -1056,7 +1056,7 @@ async def rp_commands(message: types.Message):
                     await message.reply('Не можна себе мутити!')
                 else:
                     d = message.reply_to_message.from_user.id
-                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), 5)
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=3,minutes=5)
                     await bot.send_message(message.chat.id, f"🐶🤬| [{nick_first_user}](tg://user?id={b}) відправив в будку [{nick_two_user}](tg://user?id={d})\n😘На 5 хвилин", parse_mode='Markdown')
 
     except TypeError:
