@@ -1026,7 +1026,16 @@ async def rp_commands(message: types.Message):
                         
             if 'дати підсрачника\n' in message.text or 'Дати підсрачника\n' in message.text:
                 await bot.send_message(message.chat.id, f"🦶☺️| [{nick_first_user}](tg://user?id={b}) дав підсрачника [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[17:]}", parse_mode='Markdown')
+
+            if message.text == 'відхуярити' or message.text == 'Відхуярити':
+                await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWTBjaWR_b5UVI4q-SAEk5HqBvIUVowACaxQAAu8YqEh108W_s5NHWisE')
+                await bot.send_message(message.chat.id, f"😡🥊| [{nick_first_user}](tg://user?id={b}) відхуярив/ла [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
+                        
+            if 'відхуярити\n' in message.text or 'Відхуярити\n' in message.text:
+                await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWTBjaWR_b5UVI4q-SAEk5HqBvIUVowACaxQAAu8YqEh108W_s5NHWisE')
+                await bot.send_message(message.chat.id, f"😡🥊| [{nick_first_user}](tg://user?id={b}) відхуярив/ла [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[17:]}", parse_mode='Markdown')
             
+
             if message.text == 'отруїти' or message.text == 'Отруїти':
                 await bot.send_message(message.chat.id, f"🧪☠️| [{nick_first_user}](tg://user?id={b}) отруїв [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                         
