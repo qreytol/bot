@@ -1033,7 +1033,7 @@ async def rp_commands(message: types.Message):
                         
             if 'відхуярити\n' in message.text or 'Відхуярити\n' in message.text:
                 await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWTBjaWR_b5UVI4q-SAEk5HqBvIUVowACaxQAAu8YqEh108W_s5NHWisE')
-                await bot.send_message(message.chat.id, f"😡🥊| [{nick_first_user}](tg://user?id={b}) відхуярив/ла [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[17:]}", parse_mode='Markdown')
+                await bot.send_message(message.chat.id, f"😡🥊| [{nick_first_user}](tg://user?id={b}) відхуярив/ла [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[11:]}", parse_mode='Markdown')
             
 
             if message.text == 'отруїти' or message.text == 'Отруїти':
@@ -1056,7 +1056,7 @@ async def rp_commands(message: types.Message):
                         
             if 'пожарити\n' in message.text or 'Пожарити\n' in message.text:
                 await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWTdjaWgipSbVPucv1IhN40WqCya3iwACNxMAAv6yKUhCjhJz-jcv_isE')
-                await bot.send_message(message.chat.id, f"🔥😼| [{nick_first_user}](tg://user?id={b}) зажарив/ла [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[10:]}", parse_mode='Markdown')
+                await bot.send_message(message.chat.id, f"🔥😼| [{nick_first_user}](tg://user?id={b}) зажарив/ла [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[9:]}", parse_mode='Markdown')
 
 
             if message.text == 'В буду' or message.text == 'в буду':
