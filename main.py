@@ -888,6 +888,10 @@ async def rp_commands(message: types.Message):
             db.nick_user(nickname, user_id)
             new_nick_check = db.check_nick(user_id)
             await bot.send_message(message.chat.id, '📒Твій новий нік: ' + new_nick_check[0])
+            
+        if message.text == 'GET_TIME':
+            await message.reply(f'{datetime.datetime.now()}')
+            
         if '+опис ' in message.text:
             #міняє опис в боті
             user_id = message.from_user.id
