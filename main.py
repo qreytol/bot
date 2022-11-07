@@ -702,12 +702,12 @@ async def rp_commands(message: types.Message):
                     await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
                 elif na_chto_myt == 'хвилин' or na_chto_myt == 'хвилина':
-                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3,minutes=time_myt)
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=2,minutes=time_myt)
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
                     await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
                 elif na_chto_myt == 'днів' or na_chto_myt == 'день':
-                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=3,days=time_myt)
+                    full_minutes = datetime.datetime.now() + datetime.timedelta(hours=2,days=time_myt)
                     fff = full_minutes.strftime('%Y-%m-%d %H:%M:%S')
                     await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(days=time_myt))
                     await message.answer(f'👤Користувач [{db.check_nick(d)[0]}](tg://user?id={d})\n⌚️Получив мут на: {time_myt} {na_chto_myt}\n⏳Юзер зможе писати в {fff}', parse_mode='Markdown')
@@ -768,7 +768,7 @@ async def rp_commands(message: types.Message):
                 air_raide_advertisement = el.select('.amo-map-alarms-list-item-info-announced span')
                 if time_air_raide != []:
                     time1 = datetime.time(hour=int(air_raide_advertisement[0].text[:2]),minute=int(air_raide_advertisement[0].text[3:5]))
-                    timedelta = datetime.timedelta(hours=3)
+                    timedelta = datetime.timedelta(hours=2)
                     b = (datetime.datetime.combine(datetime.date.today(), time1) + timedelta).time()
                     full_information_of_ukraine_raide.append(f'📢{air_raide_name}\n    Оголошена в {str(b)[:5]} {air_raide_advertisement[0].text[5:]}\n')
             await message.reply('\n'.join(full_information_of_ukraine_raide))
@@ -1071,7 +1071,7 @@ async def rp_commands(message: types.Message):
                     await message.reply('Не можна себе мутити!')
                 else:
                     d = message.reply_to_message.from_user.id
-                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=3,minutes=5))
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=2,minutes=5))
                     await bot.send_message(message.chat.id, f"🐶🤬| [{nick_first_user}](tg://user?id={b}) відправив в будку [{nick_two_user}](tg://user?id={d})\n😘На 5 хвилин", parse_mode='Markdown')
                         
             if 'В буду\n' in message.text or 'в буду\n' in message.text:
@@ -1082,7 +1082,7 @@ async def rp_commands(message: types.Message):
                     await message.reply('Не можна себе мутити!')
                 else:
                     d = message.reply_to_message.from_user.id
-                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=3,minutes=5))
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=2,minutes=5))
                     await bot.send_message(message.chat.id, f"🐶🤬| [{nick_first_user}](tg://user?id={b}) відправив в будку [{nick_two_user}](tg://user?id={d})\n😘На 5 хвилин", parse_mode='Markdown')
 
     except TypeError:
