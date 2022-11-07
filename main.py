@@ -1014,9 +1014,11 @@ async def rp_commands(message: types.Message):
                 await bot.send_message(message.chat.id, f"🥵❤️| [{nick_first_user}](tg://user?id={b}) жостко кохається з [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[9:]}", parse_mode='Markdown')
             
             if message.text == "цьом" or message.text == 'Цьом':
+                await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWRxjaV07Kyi7acMGqQ9bRkbSKpv_fAACaR4AAh3tYUkpdZKPeRAC_isE')
                 await bot.send_message(message.chat.id, f"💓🌸| [{nick_first_user}](tg://user?id={b}) поцьомав [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                         
             if 'цьом\n' in message.text or 'Цьом\n' in message.text:
+                await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWRxjaV07Kyi7acMGqQ9bRkbSKpv_fAACaR4AAh3tYUkpdZKPeRAC_isE')
                 await bot.send_message(message.chat.id, f"💓🌸| [{nick_first_user}](tg://user?id={b}) поцьомав [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[5:]}", parse_mode='Markdown')
             
             if message.text == 'дати підсрачника' or message.text == 'Дати підсрачника':
