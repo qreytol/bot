@@ -1043,10 +1043,21 @@ async def rp_commands(message: types.Message):
                 await bot.send_message(message.chat.id, f"🧪☠️| [{nick_first_user}](tg://user?id={b}) отруїв [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[8:]}", parse_mode='Markdown')
             
             if message.text == 'покормити' or message.text == 'Покормити':
+                await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWT1jaWt0rrapOC_IwmCHBiH_O-vocwACTxsAAuUaaUmieLO0IY73kisE')
                 await bot.send_message(message.chat.id, f"😋🍕| [{nick_first_user}](tg://user?id={b}) покормив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
                         
             if 'покормити\n' in message.text or 'Покормити\n' in message.text:
+                await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWT1jaWt0rrapOC_IwmCHBiH_O-vocwACTxsAAuUaaUmieLO0IY73kisE')
                 await bot.send_message(message.chat.id, f"😋🍕| [{nick_first_user}](tg://user?id={b}) покормив [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[10:]}", parse_mode='Markdown')
+
+            if message.text == 'пожарити' or message.text == 'Пожарити':
+                await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWTdjaWgipSbVPucv1IhN40WqCya3iwACNxMAAv6yKUhCjhJz-jcv_isE')
+                await bot.send_message(message.chat.id, f"🔥😼| [{nick_first_user}](tg://user?id={b}) зажарив/ла [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
+                        
+            if 'пожарити\n' in message.text or 'Пожарити\n' in message.text:
+                await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWTdjaWgipSbVPucv1IhN40WqCya3iwACNxMAAv6yKUhCjhJz-jcv_isE')
+                await bot.send_message(message.chat.id, f"🔥😼| [{nick_first_user}](tg://user?id={b}) зажарив/ла [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[10:]}", parse_mode='Markdown')
+
 
             if message.text == 'В буду' or message.text == 'в буду':
                 owner_adm = await bot.get_chat_member(message.chat.id, d)
