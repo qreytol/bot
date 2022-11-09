@@ -1046,6 +1046,13 @@ async def rp_commands(message: types.Message):
             if 'отруїти\n' in message.text or 'Отруїти\n' in message.text:
                 await bot.send_message(message.chat.id, f"🧪☠️| [{nick_first_user}](tg://user?id={b}) отруїв [{nick_two_user}](tg://user?id={d})\n💬З реплікою: {message.text[8:]}", parse_mode='Markdown')
             
+            if message.text == 'На олімпіаду' or message.text == 'на олімпіаду':
+                await bot.send_message(message.chat.id, f"😘✨| [{nick_first_user}](tg://user?id={b}) відправив [{nick_two_user}](tg://user?id={d}) на олімпіаду з християнської етики", parse_mode='Markdown')
+                        
+            if 'На олімпіаду\n' in message.text or 'на олімпіаду\n' in message.text:
+                await bot.send_message(message.chat.id, f"😘✨| [{nick_first_user}](tg://user?id={b}) відправив [{nick_two_user}](tg://user?id={d}) на олімпіаду з християнської етики\n💬З реплікою: {message.text[13:]}", parse_mode='Markdown')
+            
+
             if message.text == 'покормити' or message.text == 'Покормити':
                 await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEGWT1jaWt0rrapOC_IwmCHBiH_O-vocwACTxsAAuUaaUmieLO0IY73kisE')
                 await bot.send_message(message.chat.id, f"😋🍕| [{nick_first_user}](tg://user?id={b}) покормив [{nick_two_user}](tg://user?id={d})", parse_mode='Markdown')
@@ -1071,7 +1078,7 @@ async def rp_commands(message: types.Message):
                     await message.reply('Не можна себе мутити!')
                 else:
                     d = message.reply_to_message.from_user.id
-                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=2,minutes=5))
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=5))
                     await bot.send_message(message.chat.id, f"🐶🤬| [{nick_first_user}](tg://user?id={b}) відправив в будку [{nick_two_user}](tg://user?id={d})\n😘На 5 хвилин", parse_mode='Markdown')
                         
             if 'В буду\n' in message.text or 'в буду\n' in message.text:
@@ -1082,7 +1089,7 @@ async def rp_commands(message: types.Message):
                     await message.reply('Не можна себе мутити!')
                 else:
                     d = message.reply_to_message.from_user.id
-                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(hours=2,minutes=5))
+                    await bot.restrict_chat_member(message.chat.id, d, types.ChatPermissions(False), datetime.datetime.now() + datetime.timedelta(minutes=5))
                     await bot.send_message(message.chat.id, f"🐶🤬| [{nick_first_user}](tg://user?id={b}) відправив в будку [{nick_two_user}](tg://user?id={d})\n😘На 5 хвилин", parse_mode='Markdown')
 
     except TypeError:
